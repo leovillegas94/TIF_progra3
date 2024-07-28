@@ -1,5 +1,5 @@
 import React from 'react';
-import './Cancion.css';
+import '../styles/Cancion.css';
 import {FaPlay} from 'react-icons/fa';
 
 export default function Cancion({ song }) {

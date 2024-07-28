@@ -1,0 +1,39 @@
+.artist {
+    max-height: 200px;
+    max-width: 600px;
+    background-color: #222;
+    box-shadow: 0 5px 5px #ffeb3bcc;
+    padding: 20px;
+    display: flex;
+    border-color: black 20px;
+    border-radius: 10px;
+    align-items: center;
+    gap: 20px;
+    cursor: pointer;
+    color: white;
+}
+
+.artist:hover {
+    background-color: grey;
+    box-shadow: 0 0 20px #76ff7a;
+    color: black;
+}
+
+.artist-img img{
+    width: 150px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #76ff7a;
+}
+.artist:hover> img {
+    border-radius: 10px;
+    box-shadow: 0 0 10px white;
+}
+
+.artist-bio {
+    font-size: medium;
+}
+
+
+
+

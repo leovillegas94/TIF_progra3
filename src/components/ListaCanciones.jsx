@@ -15,6 +15,7 @@ const ListaCanciones = () => {
 
     return (
         <div className="lista-canciones">
+            <h2>Lista de Canciones</h2>
             {canciones.map(cancion => (
             <Cancion key={cancion.id} song={cancion} />
         ))}
