@@ -7,14 +7,19 @@ const ITEMS_PER_PAGE = 3;
 const ListaCanciones = () => {
     const [canciones, setCanciones] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
+    const [totalPages, setTotalPages] = useState(1);
 
     useEffect(() => {
-        const fetchCanciones = async () => {
-            const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs');
+        const fetchCanciones = async (url) => {
+            const response = await fetch(url);
             const data = await response.json();
-            setCanciones(data.results);
+            setCanciones(prevCanciones => [...prevCanciones, ...data.results]);
+            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+            if (data.next) {
+                fetchCanciones(data.next);
+            }
         };
-        fetchCanciones();
+        fetchCanciones('https://sandbox.academiadevelopers.com/harmonyhub/songs');
     }, []);
 
     const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
@@ -22,11 +27,9 @@ const ListaCanciones = () => {
     const cancionesToShow = canciones.slice(startIndex, endIndex);
 
     const handlePageChange = (newPage) => {
-        if (newPage < 1 || newPage > totalPages) return; 
+        if (newPage < 1 || newPage > totalPages) return;
         setCurrentPage(newPage);
     };
-
-    const totalPages = Math.ceil(canciones.length / ITEMS_PER_PAGE);
 
     return (
         <div className="lista-canciones">

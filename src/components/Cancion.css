@@ -6,7 +6,7 @@
     padding: 10px;
     background-color: black;
     color: white;
-    border-radius: 10px;
+    border-radius: 50px;
     box-shadow: 0 4px 8px rgba(255, 235, 59, 0.8);
 }
 
@@ -18,9 +18,12 @@
     border-radius: 3px;
     color: black;
     display: flex;
-    align-items: center; 
-    height: 100%; 
+    justify-content: center;
+    align-items: center;
+    height: 50px;
+    width: 50px; 
     margin-right: 20px; 
+    border-radius: 100%;
 }
 
 .track-info {

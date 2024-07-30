@@ -32,3 +32,9 @@
 .pagination-button:hover {
     background-color: #65e068; 
 }
+
+audio {
+    margin-top: 15px;
+    width: 350px;
+    height: 30px;
+}
