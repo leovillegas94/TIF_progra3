@@ -1,5 +1,6 @@
 import React from 'react';
 import ListaCanciones from './components/ListaCanciones';
+import './App.css';
 
 const App = () => {
   return (
