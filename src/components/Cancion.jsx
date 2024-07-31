@@ -1,4 +1,5 @@
 import React from 'react';
+import {FaEdit, FaTrash} from 'react-icons/fa';
 import './Cancion.css';
 
 
@@ -18,6 +19,14 @@ export default function Cancion({ song }) {
                     </div>
                     <p>{song.year}</p>
                 </div>
+            </div>
+            <div className="track-actions">
+                <button className="edit-button">
+                    <FaEdit /> Modificar
+                </button>
+                <button className="delete-button">
+                    <FaTrash /> Eliminar
+                </button>
             </div>
         </div>
     );

@@ -1,4 +1,5 @@
 import React, { useEffect, useState } from 'react';
+import {FaPlus} from 'react-icons/fa';
 import Cancion from './Cancion';
 import './ListaCanciones.css';
 
@@ -33,6 +34,11 @@ const ListaCanciones = () => {
 
     return (
         <div className="lista-canciones">
+            <div className="agregar-cancion">
+                <button className="add-button">
+                    <FaPlus /> Agregar
+                </button>
+            </div>
             {cancionesToShow.map(cancion => (
                 <Cancion key={cancion.id} song={cancion} />
             ))}
