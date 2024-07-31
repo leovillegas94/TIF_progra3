@@ -2,9 +2,9 @@
     display: flex;
     justify-content: space-between;
     align-items: center;
-    padding: 10px 20px;
+    padding: 0 20px;
     background-color: #333;
-    color: white;
+    color: #fff;
 }
 
 .navbar-left {
@@ -13,26 +13,72 @@
 }
 
 .navbar-icon {
-    font-size: 24px;
+    font-size: 1.5rem;
     margin-right: 10px;
 }
 
 .navbar-title {
-    font-size: 20px;
-    font-weight: bold;
+    font-size: 1.2rem;
 }
 
 .navbar-right {
     display: flex;
-    gap: 15px;
+    align-items: center;
 }
 
 .navbar-link {
-    color: white;
+    margin: 0 10px;
+    color: #fff;
     text-decoration: none;
-    font-size: 16px;
 }
 
 .navbar-link:hover {
     text-decoration: underline;
+}
+
+.navbar-user {
+    display: flex;
+    align-items: center;
+    position: relative;
+}
+
+.navbar-user-icon {
+    font-size: 1.5rem;
+    cursor: pointer;
+}
+
+.navbar-username {
+    margin-left: 10px;
+}
+
+.navbar-dropdown {
+    position: absolute;
+    top: 100%;
+    right: 0;
+    background-color: #444;
+    border: 1px solid #555;
+    border-radius: 5px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.2);
+    z-index: 1000;
+}
+
+.navbar-dropdown-item {
+    display: flex;
+    align-items: center;
+    padding: 10px 20px;
+    color: #fff;
+    background-color: #444;
+    border: none;
+    text-align: left;
+    cursor: pointer;
+    width: 100%;
+    text-align: left;
+}
+
+.navbar-dropdown-item:hover {
+    background-color: #555;
+}
+
+.dropdown-icon {
+    margin-right: 10px;
 }

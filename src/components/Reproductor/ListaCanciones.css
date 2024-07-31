@@ -1,63 +1,53 @@
 .lista-canciones {
-    margin: 0 auto;
-    padding: 20px;
-    max-width: 1200px;
-}
-
-.agregar-cancion {
     display: flex;
     flex-direction: column;
     align-items: center;
+}
+
+.agregar-cancion {
     margin-bottom: 20px;
 }
 
 .add-button {
     display: flex;
     align-items: center;
-    gap: 5px;
-    padding: 10px 20px;
-    background-color: #007bff;
-    color:white;
-    border:none;
-    border-radius: 50px;
-    cursor:pointer;
+    background-color: #30aafc;
+    color: black;
+    border: none;
+    padding: 10px;
+    border-radius: 25px;
+    cursor: pointer;
+    margin-top: 30px;
 }
 
-.add-button:hover{
-    background-color: #0053b3;
+.add-button:hover {
+    background-color: #65e068;
 }
 
 .pagination {
     display: flex;
-    justify-content: center;
     align-items: center;
     margin-top: 20px;
 }
 
 .pagination-button {
-    background-color: #76ff7a; 
+    background-color: #76ff7a;
     border: none;
+    padding: 10px;
+    border-radius: 50%;
     color: black;
-    padding: 10px 20px;
-    margin: 0 5px;
     cursor: pointer;
-    border-radius: 5px;
-    font-size: 14px;
-    transition: background-color 0.3s; 
+    font-size: 1.2rem;
+    margin: 0 5px;
 }
 
-.pagination-button.active {
-    background-color: #ff0000; 
-    color: white; 
-    font-weight: bold;
+.pagination-button:disabled {
+    background-color: #aaa;
+    cursor: not-allowed;
 }
 
-.pagination-button:hover {
-    background-color: #65e068; 
-}
-
-audio {
-    margin-top: 15px;
-    width: 350px;
-    height: 30px;
+.pagination-number {
+    font-size: 1.2rem;
+    margin: 0 10px;
+    color: white;
 }

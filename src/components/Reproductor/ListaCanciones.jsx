@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {FaPlus} from 'react-icons/fa';
+import {FaPlus, FaChevronLeft, FaChevronRight} from 'react-icons/fa';
 import Cancion from './Cancion';
 import './ListaCanciones.css';
 
@@ -43,15 +43,21 @@ const ListaCanciones = () => {
                 <Cancion key={cancion.id} song={cancion} />
             ))}
             <div className="pagination">
-                {Array.from({ length: totalPages }, (_, index) => (
-                    <button
-                        key={index + 1}
-                        className={`pagination-button ${currentPage === index + 1 ? 'active' : ''}`}
-                        onClick={() => handlePageChange(index + 1)}
-                    >
-                        {index + 1}
-                    </button>
-                ))}
+                <button
+                    className='pagination-button'
+                    onClick={() => handlePageChange(currentPage - 1)}
+                    disabled={currentPage === 1}
+                >
+                    <FaChevronLeft />
+                </button>
+                <span className="pagination-number">{currentPage}</span>
+                <button
+                    className="pagination-button"
+                    onClick ={() => handlePageChange(currentPage + 1)}
+                    disabled={currentPage === totalPages}
+                >
+                    <FaChevronRight />
+                </button>
             </div>
         </div>
     );
