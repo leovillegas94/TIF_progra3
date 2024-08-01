@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import {FaPlus, FaChevronLeft, FaChevronRight} from 'react-icons/fa';
+import {FaPlus, FaChevronLeft, FaChevronRight, FaSearch} from 'react-icons/fa';
 import Cancion from './Cancion';
 import './ListaCanciones.css';
 
@@ -9,6 +9,7 @@ const ListaCanciones = () => {
     const [canciones, setCanciones] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
+    const [searchQuery, setSearchQuery] = useState('');
 
     useEffect(() => {
         const fetchCanciones = async (url) => {
@@ -34,11 +35,25 @@ const ListaCanciones = () => {
 
     return (
         <div className="lista-canciones">
-            <div className="agregar-cancion">
-                <button className="add-button">
-                    <FaPlus /> Agregar
-                </button>
-            </div>
+            <div className='top-bar'>
+                <div className="agregar-cancion">
+                    <button className="add-button">
+                        <FaPlus /> Agregar
+                    </button>
+                </div>
+                <div className='search-container'>
+                    <input
+                        type='text'
+                        value={searchQuery}
+                        onChange={(e) => setSearchQuery(e.target.value)}
+                        placeholder='Inserte el ID para buscar una canción'
+                        className='search-input'
+                    />
+                    <button type='submit' className="search-button">
+                        <FaSearch />
+                    </button>
+                </div>
+            </div> 
             {cancionesToShow.map(cancion => (
                 <Cancion key={cancion.id} song={cancion} />
             ))}
