@@ -1,28 +1,47 @@
-import React, {useState} from "react";
-import "../styles/NavBar.css"
-import { MdMargin } from "react-icons/md";
+import React, { useState } from 'react';
+import { FaMusic, FaUser, FaSignOutAlt } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
+import { useAuth } from './Contexts/AuthContext';
+import './NavBar.css';
 
-export default function NavBar(){
-    const [clicked, setClicked] = useState(false)
-    const handleClick = () => {
-        setClicked(!clicked)
-    }
+export default function NavBar() {
+    const [showMenu, setShowMenu] = useState(false);
+    const { state, actions } = useAuth();
+    const { isAuthenticated, user } = state;
+
+    const handleMenuToggle = () => setShowMenu(prev => !prev);
 
     return (
-        <header className="header">
-            <div  className="logo">
-                <img src="public\Play.png"/>
-                <h2 className="name">Harmony Hub</h2>
+        <nav className="navbar">
+            <div className="navbar-left">
+                <FaMusic className="navbar-icon" />
+                <span className="navbar-title">Harmony Hub</span>
             </div>
-            <nav>
-                <ul className="nav-links">
-                    <li><a className="a">Canciones</a></li>
-                    <li><a className="a">Artistas</a></li>
-                    <li><a className="a">Albums</a></li>
-                    <li><a className="a">Generos</a></li>
-                </ul>
-            </nav>
-            <a className="button-log"><button>Login</button></a>
-        </header>
+            <div className="navbar-right">
+                <Link to="/" className="navbar-link">Inicio</Link>
+                <Link to="/artistas" className="navbar-link">Artistas</Link>
+                <Link to="/albums" className="navbar-link">Albums</Link>
+                {isAuthenticated && user ? (
+                    <div className='navbar-user'>
+                        <FaUser 
+                            className='navbar-user-icon' 
+                            onClick={handleMenuToggle}
+                            aria-expanded={showMenu}
+                            aria-controls="navBar-dropdown"
+                        />
+                        <span className="navbar-username">{user.username}</span>
+                        {showMenu && (
+                            <div className='navbar-dropdown'>
+                                <button onClick={actions.logout} className='navbar-dropdown-item'>
+                                    <FaSignOutAlt className='dropdown-icon' />Cerrar sesión
+                                </button>
+                            </div>
+                        )}
+                    </div>
+                ) : (
+                    <Link to="/login" className="navbar-link">Iniciar sesión</Link>
+                )}
+            </div>
+        </nav>
     );
 }

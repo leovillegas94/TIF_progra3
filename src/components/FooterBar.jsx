@@ -1,15 +1,13 @@
-import React from "react";
-import "../styles/FooterBar.css"
+import React from 'react';
+import './FooterBar.css';
 
-export default function FooterBar(){
+export default function Footer() {
     return (
         <footer className="footer">
-            <div>
-                <h2 className="redes"> VISITA NUESTRAS REDES
-                <img className="icon" src="public\Facebook.png" href="https://facebook.com"></img>
-                <img className="icon" src="public\Twitter.png" href="https://twitter.com"></img>
-                <img className="icon" src="public\Instagram.png" href="https://instagram.com"></img>
-                </h2>
+            <div className="footer-content">
+                <p>2024 Harmony Hub &copy;</p>
+                <p>Una lloradita y a seguir enterprise &copy;</p>
+                <p>Todos los derechos reservados</p>
             </div>
         </footer>
     );
