@@ -36,7 +36,7 @@ const ListaArtistas = () => {
     return (
         <div className="lista-artistas">
             <div>
-                <button> Nuevo
+                <button className="add-artista"> Nuevo
                     <IoIosAddCircle/>
                 </button>
             </div>

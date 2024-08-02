@@ -24,7 +24,7 @@ const HomeAlternativo = () => {
 
     return (
         <div className="home">
-            <h2 className="home-title">Bienvenido al mundo de la música! Estos son nuestros recomendados de hoy:</h2>
+            <h2 className="home-title">Bienvenido al mundo de la música! Estos son nuestros recomendados de hoy</h2>
             <div className="home-body">
                 <div className="home-img">
                     <img src="Play.png"/>
