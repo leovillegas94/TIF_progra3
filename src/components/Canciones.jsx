@@ -1,7 +1,7 @@
 import React from 'react';
 import ListaCanciones from './Reproductor/ListaCanciones';
 
-const Home= () => {
+const Canciones= () => {
     return (
         <div>
             <ListaCanciones />
@@ -9,4 +9,4 @@ const Home= () => {
     );
 };
 
-export default Home;
+export default Canciones;

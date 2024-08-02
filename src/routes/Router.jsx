@@ -1,8 +1,8 @@
 import {createBrowserRouter} from 'react-router-dom';
 import Layout from "./Layout";
 import HomeAlternativo from '../components/HomeAlternativo';
-import ListaCanciones from '../components/Reproductor/ListaCanciones';
 import ListaArtistas from '../components/ListaArtistas';
+import Canciones from '../components/Canciones';
 import Login from "../components/Auth/Login";
 
 
@@ -16,7 +16,7 @@ const router = createBrowserRouter([
             },
             {
                 path:"/canciones",
-                element: <ListaCanciones/>
+                element: <Canciones/>
             },
             {
                 path: "/artistas",
