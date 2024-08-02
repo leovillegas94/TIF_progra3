@@ -5,6 +5,7 @@ import './Login.css';
 
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
+    const [error, setError] = useState('')
     const usernameRef = useRef();
     const passwordRef = useRef();
     const { actions } = useAuth(); 
@@ -14,6 +15,7 @@ const Login = () => {
         event.preventDefault();
         if (!isLoading) {
             setIsLoading(true);
+            setError('');
             try {
                 const response = await fetch('https://sandbox.academiadevelopers.com/api-auth/', {
                     method: 'POST',
@@ -36,6 +38,7 @@ const Login = () => {
                 actions.login(token, { username: usernameRef.current.value });
                 navigate('/');
             } catch (error) {
+                BiSolidCommentError('Error en el inicio de sesión. Verifica tus credenciales')
                 console.error("Error en el inicio de sesión", error);
             } finally {
                 setIsLoading(false);

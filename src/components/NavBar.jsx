@@ -1,6 +1,6 @@
-import React, { useState } from 'react';
+import React, { useState, useRef, useEffect } from 'react';
 import { FaMusic, FaUser, FaSignOutAlt } from 'react-icons/fa';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './Contexts/AuthContext';
 import './NavBar.css';
 
@@ -8,8 +8,29 @@ export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
     const { state, actions } = useAuth();
     const { isAuthenticated, user } = state;
+    const navigate = useNavigate();
+    const menuRef = useRef(null);
 
-    const handleMenuToggle = () => setShowMenu(prev => !prev);
+    const handleMenuToggle = () => {
+        setShowMenu(prev => !prev);
+    };
+
+    const handleLogout = () => {
+        actions.logout();
+        setShowMenu(false);
+        navigate('/');
+    };
+
+    useEffect(() => {
+        const handleClickOutside = (event) => {
+            if (menuRef.current && !menuRef.current.contains(event.target)) {
+                setShowMenu(false);
+            }
+        };
+
+        document.addEventListener('mousedown', handleClickOutside);
+        return () => document.removeEventListener('mousedown', handleClickOutside);
+    }, []);
 
     return (
         <nav className="navbar">
@@ -32,9 +53,10 @@ export default function NavBar() {
                         />
                         <span className="navbar-username">{user.username}</span>
                         {showMenu && (
-                            <div className='navbar-dropdown'>
-                                <button onClick={actions.logout} className='navbar-dropdown-item'>
-                                    <FaSignOutAlt className='dropdown-icon' />Cerrar sesión
+                            <div className='navbar-dropdown' ref={menuRef}>
+                                <button onClick={handleLogout} className='navbar-dropdown-item'>
+                                    <FaSignOutAlt className='dropdown-icon' />
+                                    <span className='dropdown-text'>Cerrar sesión</span>
                                 </button>
                             </div>
                         )}

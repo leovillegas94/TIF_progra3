@@ -53,6 +53,7 @@ function AuthProvider({ children }) {
             dispatch({ type: ACTIONS.LOGOUT });
             localStorage.removeItem("authToken");
             localStorage.removeItem("user");
+            navigate('/');
         },
     };
 
