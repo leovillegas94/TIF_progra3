@@ -4,7 +4,7 @@ import HomeAlternativo from '../components/HomeAlternativo';
 import ListaCanciones from '../components/Reproductor/ListaCanciones';
 import ListaArtistas from '../components/ListaArtistas';
 import Login from "../components/Auth/Login";
-import Profile from '../components/Profile';
+
 
 const router = createBrowserRouter([
     {
@@ -25,10 +25,6 @@ const router = createBrowserRouter([
             {
                 path: "/login",
                 element: <Login />
-            },
-            {
-                path:"/perfil",
-                element: <Profile/>
             },
         ]
     }
