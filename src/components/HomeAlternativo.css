@@ -1,0 +1,30 @@
+.home {
+    background-color: black;
+    margin-top: 0;
+    margin-bottom: 0;
+}
+
+.home h2{
+    color: white;
+    text-align: center;
+    padding: 30px;
+}
+.home-body {
+    display: flex;
+    flex-direction: row;
+    flex-wrap: wrap;
+}
+.home-img {
+    width: 50%;
+    align-content: center;
+    padding: 50px;
+
+}
+.home-img img{
+    height: 550px;
+    height: 550px;
+}
+.home-list{
+    width: 50%;
+    align-content: center;
+}
