@@ -1,0 +1,66 @@
+.artist {
+    height: 150px;
+    width: 800px;
+    margin-top: 20px;
+    background-color: #272424;
+    box-shadow: 0 5px 5px rgba(255, 235, 59, 0.8);
+    padding: 20px;
+    display: flex;
+    border-color: black 20px;
+    border-radius: 10px;
+    align-items: center;
+    color: white;
+    gap: 50px;
+}
+
+.artist-name h2{
+    color: white;
+}
+
+.artist:hover {
+    background-color: grey;
+    box-shadow: 0 0 20px #76ff7a;
+    color: black;
+}
+
+.artist-img img{
+    width: 150px;
+    height: 100px;
+    border-radius: 10px;
+    box-shadow: 0 0 15px #76ff7a;
+}
+.artist:hover> img {
+    border-radius: 10px;
+    box-shadow: 0 0 10px white;
+}
+
+.artist-bio {
+    font-size: medium;
+}
+.button-option {
+    position: absolute;
+    right: 0;
+    top: 0;
+    color: white;
+    height: 20px;
+    width: 30px;
+    background-color: #30aafc;
+    border: none;
+    border-radius: 10px;
+    box-shadow: 0 4px 8px rgba(255, 235, 59, 0.8);
+    transition: all 0.3s ease 0s;
+}
+.button-option:hover {
+    background-color: #76ff7a;
+    color: black;
+    cursor: pointer;
+    transform: scale(1.2);
+}
+.click {
+    transform: translateX(67vw);
+}
+
+.link {
+    color: white;
+    font-size: small;
+}

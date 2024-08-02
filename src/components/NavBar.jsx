@@ -19,6 +19,7 @@ export default function NavBar() {
             </div>
             <div className="navbar-right">
                 <Link to="/" className="navbar-link">Inicio</Link>
+                <Link to="/canciones" className="navbar-link">Canciones</Link>
                 <Link to="/artistas" className="navbar-link">Artistas</Link>
                 <Link to="/albums" className="navbar-link">Albums</Link>
                 {isAuthenticated && user ? (
