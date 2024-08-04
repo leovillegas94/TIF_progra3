@@ -4,6 +4,8 @@ import HomeAlternativo from '../components/HomeAlternativo';
 import ListaArtistas from '../components/ListaArtistas';
 import Canciones from '../components/Canciones';
 import Login from "../components/Auth/Login";
+import NotFound from '../components/NotFound';
+import ListaAlbums from '../Albums/ListaAlbums';
 
 
 const router = createBrowserRouter([
@@ -26,8 +28,14 @@ const router = createBrowserRouter([
                 path: "/login",
                 element: <Login />
             },
+            {
+                path: "/albums",
+                element: <ListaAlbums />
+            }
         ]
-    }
+    },
 ]);
+
+
 
 export default router;
