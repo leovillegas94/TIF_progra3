@@ -4,6 +4,8 @@ import HomeAlternativo from '../components/HomeAlternativo';
 import ListaArtistas from '../components/ListaArtistas';
 import Canciones from '../components/Canciones';
 import Login from "../components/Auth/Login";
+import Albums from "../components/Albums";
+import NotFound from "../components/NotFound";
 
 
 const router = createBrowserRouter([
@@ -26,7 +28,15 @@ const router = createBrowserRouter([
                 path: "/login",
                 element: <Login />
             },
+            {
+                path: "/albums",
+                element: <Albums />
+            }
         ]
+    },
+    {
+        path: "*",
+        element: <NotFound />
     }
 ]);
 
