@@ -1,12 +1,11 @@
-import {useAuth} from '../contexts/AuthContext';
-import {Navigate, useLocation} from 'react-router-dom';
+import {useAuth} from '../components/Contexts/AuthContext';
+import IniciarSesion from '../components/IniciarSesion';
 
 export default function ProtectedRoute({children}) {
     const {isAuthenticated} = useAuth("state");
-    const location = useLocation();
 
     if (!isAuthenticated) {
-        return <Navigate to="/login" state={{from: location}} />;
+        return <IniciarSesion />;
     }
 
     return children;
