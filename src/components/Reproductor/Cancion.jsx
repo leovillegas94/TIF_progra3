@@ -4,21 +4,32 @@ import './Cancion.css';
 import { useAuth } from '../Contexts/AuthContext';
 
 export default function Cancion({ song }) {
-
-    const { state, actions } = useAuth();
-    const { isAuthenticated, user } = state;
-
-    //const [canciones, setCanciones] = useState([]);
+    const { state } = useAuth();
+    console.log(state)
     
     const handleDeleteSong = async (id) => {
-        const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}`;
-        const response = await fetch(URL, {method: 'DELETE', headers: {Authorization: `Token ${token}`}});
-        const data = await response.json();
-        console.log(data);
-    
-        //setCanciones(canciones =>canciones.filter(cancion => song.id !== id))
-    }
-        
+        const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
+        try {
+          const response = await fetch(URL, {
+            method: 'DELETE',
+            headers: {
+              Authorization: `Token ${state.token}`,
+            }
+          });
+          
+          console.log('Respuesta de la API:', response);
+      
+          if (!response.ok) {
+            const errorData = await response.json();
+            console.error('Detalles del error:', errorData);
+            throw new Error(`No se pudo eliminar la canción. Estado: ${response.status}`);
+          }
+      
+          console.log('Canción eliminada con éxito');
+        } catch (error) {
+          console.error('Error al eliminar la canción:', error.message);
+        }
+      }
 
     return (
         <div className="track">
