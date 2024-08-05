@@ -91,7 +91,7 @@ const ListaCanciones = () => {
                     </button>
                 </div>
             </div>
-            {(errorMessage || searchResult) ? (
+            {errorMessage || searchResult ? (
                 <div className="no-encontrada">
                     {errorMessage ? (
                         <>
@@ -106,34 +106,34 @@ const ListaCanciones = () => {
                     </button>
                 </div>
             ) : cancionesToShow.length > 0 ? (
-                cancionesToShow.map(cancion => (
-                    <Cancion key={cancion.id} song={cancion} />
-                ))
+                <>
+                    {cancionesToShow.map(cancion => (
+                        <Cancion key={cancion.id} song={cancion} />
+                    ))}
+                    <div className="pagination">
+                        <button
+                            className='pagination-button'
+                            onClick={() => handlePageChange(currentPage - 1)}
+                            disabled={currentPage === 1}
+                        >
+                            <FaChevronLeft />
+                        </button>
+                        <span className="pagination-number">{currentPage}</span>
+                        <button
+                            className="pagination-button"
+                            onClick={() => handlePageChange(currentPage + 1)}
+                            disabled={currentPage === totalPages}
+                        >
+                            <FaChevronRight />
+                        </button>
+                    </div>
+                </>
             ) : (
                 <div className="no-encontrada">
                     <img src={elementoNoEncontrado} alt="No encontrada" className="no-encontrada-img" />
                     <div className="no-encontrada-message">No tenemos lo que buscas</div>
                     <button className="pagination-button" onClick={handleClearSearch}>
                         Volver a canciones
-                    </button>
-                </div>
-            )}
-            {!searchResult && cancionesToShow.length > 0 && (
-                <div className="pagination">
-                    <button
-                        className='pagination-button'
-                        onClick={() => handlePageChange(currentPage - 1)}
-                        disabled={currentPage === 1}
-                    >
-                        <FaChevronLeft />
-                    </button>
-                    <span className="pagination-number">{currentPage}</span>
-                    <button
-                        className="pagination-button"
-                        onClick={() => handlePageChange(currentPage + 1)}
-                        disabled={currentPage === totalPages}
-                    >
-                        <FaChevronRight />
                     </button>
                 </div>
             )}
