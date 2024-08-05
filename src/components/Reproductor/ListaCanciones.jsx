@@ -3,16 +3,19 @@ import { FaPlus, FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa'
 import Cancion from './Cancion';
 import elementoNoEncontrado from '../../assets/elemento_no_encontrado.jpg';
 import './ListaCanciones.css';
+import { useAuth } from '../Contexts/AuthContext';
 
 const ITEMS_PER_PAGE = 3;
 
 const ListaCanciones = () => {
+    const { state } = useAuth();
     const [canciones, setCanciones] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResult, setSearchResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
+
 
     useEffect(() => {
         const fetchCanciones = async (url) => {
@@ -70,11 +73,27 @@ const ListaCanciones = () => {
         setErrorMessage('');
     };
 
+    const handleAdd = async() => {
+        const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/`
+        try{
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: {
+                  Authorization: `Token ${state.token}`,
+                }
+              })
+        } catch (error) {
+            console.error("Error al agregar la cancion: ", error);
+            setSearchResult(null);
+            setErrorMessage('Error al agregar cancion.');
+        }
+    };
+
     return (
         <div className="lista-canciones">
             <div className='top-bar'>
                 <div className="agregar-cancion">
-                    <button className="add-button">
+                    <button className="add-button" onClick={handleAdd}>
                         <FaPlus /> Agregar
                     </button>
                 </div>
