@@ -27,7 +27,7 @@ const router = createBrowserRouter([
                 element: <ListaArtistas/>,
                 children: [
                     {
-                        path: "/agregar",
+                        path: "agregar",
                         element: (
                             <ProtectedRoute>
                                 <AgregarArtista />
