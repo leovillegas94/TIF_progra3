@@ -14,6 +14,7 @@ export default function Album({album}) {
                 <h3>{album.title}</h3>
                 <p>{album.artist}</p>
                 <p>{album.year}</p>
+                <p>#{album.id}</p>
             </div>
         </div>
     );

@@ -96,3 +96,36 @@
 .pagination-number {
     margin: 0 8px;
 }
+
+.no-encontrada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background-color: black; 
+    color: #fff;
+    text-align: center;
+}
+
+.no-encontrada-img {
+    max-width: 450px;
+    margin-bottom: 20px;
+    border-radius: 50px;
+    box-shadow: 4px 4px 8px white;
+}
+
+.no-encontrada-message {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.no-encontrada .pagination-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color:black;
+    background-color: #76ff7a;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
