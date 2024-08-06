@@ -3,19 +3,18 @@ import { FaPlus, FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa'
 import Cancion from './Cancion';
 import elementoNoEncontrado from '../../assets/elemento_no_encontrado.jpg';
 import './ListaCanciones.css';
-import { useAuth } from '../Contexts/AuthContext';
+import { useNavigate } from 'react-router-dom'; // Import useNavigate
 
 const ITEMS_PER_PAGE = 3;
 
 const ListaCanciones = () => {
-    const { state } = useAuth();
     const [canciones, setCanciones] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResult, setSearchResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
-
+    const navigate = useNavigate(); // Instanciar useNavigate
 
     useEffect(() => {
         const fetchCanciones = async () => {
@@ -75,13 +74,17 @@ const ListaCanciones = () => {
         setCurrentPage(1); 
     };
 
+    const handleAddSong = () => {
+        navigate('/canciones/agregar'); 
+    };
+
     const cancionesToShow = searchResult ? [searchResult] : canciones;
 
     return (
         <div className="lista-canciones">
             <div className='top-bar'>
                 <div className="agregar-cancion">
-                    <button className="add-button">
+                    <button className="add-button" onClick={handleAddSong}>
                         <FaPlus /> Agregar
                     </button>
                 </div>

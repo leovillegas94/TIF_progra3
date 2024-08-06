@@ -3,6 +3,7 @@ import Layout from "./Layout";
 import HomeAlternativo from '../components/HomeAlternativo';
 import ListaArtistas from '../components/ListaArtistas';
 import Canciones from '../components/Canciones';
+import AgregarCancion from '../components/Reproductor/AgregarCancion';
 import Login from "../components/Auth/Login";
 import Albums from '../components/Albums';
 import NotFound from '../components/NotFound';
@@ -10,6 +11,7 @@ import ProtectedRoute from './ProtectedRoute';
 import AgregarArtista from '../components/AgregarArtista';
 import EditarArtista from '../components/EditarArtista';
 import Perfil from '../components/Perfil';
+
 
 
 const router = createBrowserRouter([
@@ -23,6 +25,14 @@ const router = createBrowserRouter([
             {
                 path: "canciones",
                 element: <Canciones/>
+            },
+            {
+                path: "/canciones/agregar",
+                element: (
+                    <ProtectedRoute>
+                        <AgregarCancion />
+                    </ProtectedRoute>
+                ),
             },
             {
                 path: "/artistas",
