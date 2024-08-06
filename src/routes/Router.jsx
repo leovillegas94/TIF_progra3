@@ -8,6 +8,9 @@ import Albums from '../components/Albums';
 import NotFound from '../components/NotFound';
 import ProtectedRoute from './ProtectedRoute';
 import AgregarArtista from '../components/AgregarArtista';
+import EditarArtista from '../components/EditarArtista';
+import Perfil from '../components/Perfil';
+
 
 const router = createBrowserRouter([
     {
@@ -22,16 +25,24 @@ const router = createBrowserRouter([
                 element: <Canciones/>
             },
             {
-                path: "artistas",
-                element: <ListaArtistas />
+                path: "/artistas",
+                element: <ListaArtistas/>,
             },
             {
-                path: "artistas/agregar",
+                path: "/artistas/agregar",
                 element: (
                     <ProtectedRoute>
                         <AgregarArtista />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: "/artistas/editar/:id",
+                element: (
+                    <ProtectedRoute>
+                        <EditarArtista />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "login",
@@ -40,6 +51,10 @@ const router = createBrowserRouter([
             {
                 path: "albums",
                 element: <Albums />
+            },
+            {
+                path: "/perfil",
+                element: <Perfil/>
             }
         ]
     },

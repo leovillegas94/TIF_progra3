@@ -17,34 +17,34 @@ const ListaArtistas = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        const fetchArtistas = async (url) => {
-            const response = await fetch(url);
-            const data = await response.json();
-            setArtistas(prevArtistas => [...prevArtistas, ...data.results]);
-            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-            if (data.next) {
-                fetchArtistas(data.next);
+        const fetchArtistas = async (page = 1) => {
+            try {
+                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?page=${page}&page_size=${ITEMS_PER_PAGE}`);
+                const data = await response.json();
+                setArtistas(data.results);
+                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+                setErrorMessage('');
+            } catch (error) {
+                console.error("Error fetching artists: ", error);
+                setErrorMessage('Error al cargar artistas.');
             }
         };
-        fetchArtistas('https://sandbox.academiadevelopers.com/harmonyhub/artists');
-    }, []);
-
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const artistasToShow = searchResult ? [searchResult] : artistas.slice(startIndex, endIndex);
+        fetchArtistas(currentPage);
+    }, [currentPage]);
 
     const handlePageChange = (newPage) => {
-        if (newPage < 1 || newPage > totalPages) return;
-        setCurrentPage(newPage);
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
     };
 
     const handleSearch = async () => {
         if (!searchQuery) return;
         try {
-            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${searchQuery}`);
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?name=${encodeURIComponent(searchQuery)}`);
             if (response.ok) {
                 const data = await response.json();
-                setSearchResult(data);
+                setSearchResult(data.results[0] || null);
                 setErrorMessage('');
             } else if (response.status === 404) {
                 setSearchResult(null);
@@ -72,6 +72,11 @@ const ListaArtistas = () => {
         setErrorMessage('');
     };
 
+    const handleDelete = (id) => {
+        setArtistas((prevArtistas) => prevArtistas.filter((artista) => artista.id !== id));
+        setCurrentPage(1); 
+    };
+
     return (
         <div className="lista-artistas">
             <div className='top-bar'>
@@ -84,7 +89,7 @@ const ListaArtistas = () => {
                         type='text'
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
-                        placeholder='Inserte el ID para buscar un artista'
+                        placeholder='Inserte el nombre para buscar un artista'
                         className='search-input'
                     />
                     <button type='submit' className="search-button" onClick={handleSearch}>
@@ -100,16 +105,24 @@ const ListaArtistas = () => {
                             <div className="no-encontrada-message">{errorMessage}</div>
                         </>
                     ) : (
-                        <Artista key={searchResult.id} artist={searchResult} />
+                        <Artista 
+                            key={searchResult.id} 
+                            artist={searchResult}
+                            onDelete={handleDelete}
+                        />
                     )}
                     <button className="pagination-button" onClick={handleClearSearch}>
                         Volver a artistas
                     </button>
                 </div>
-            ) : artistasToShow.length > 0 ? (
+            ) : artistas.length > 0 ? (
                 <>
-                    {artistasToShow.map(artista => (
-                        <Artista key={artista.id} artist={artista} />
+                    {artistas.map(artista => (
+                        <Artista 
+                            key={artista.id} 
+                            artist={artista}
+                            onDelete={handleDelete}
+                        />
                     ))}
                     <div className="pagination">
                         <button

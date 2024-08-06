@@ -1,5 +1,5 @@
-import React, { useRef, useState, useContext } from 'react';
-import { useAuth, AuthContext } from '../Contexts/AuthContext';
+import React, { useRef, useState } from 'react';
+import { useAuth } from '../Contexts/AuthContext';
 import { useNavigate } from 'react-router-dom';
 import './Login.css';
 
@@ -8,7 +8,7 @@ const Login = () => {
     const [error, setError] = useState('')
     const usernameRef = useRef();
     const passwordRef = useRef();
-    const actions = useAuth("actions"); 
+    const { actions } = useAuth(); 
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -36,7 +36,7 @@ const Login = () => {
                 const { token } = data;
 
                 actions.login(token, { username: usernameRef.current.value });
-                navigate('/perfil');
+                navigate('/');
             } catch (error) {
                 BiSolidCommentError('Error en el inicio de sesión. Verifica tus credenciales')
                 console.error("Error en el inicio de sesión", error);

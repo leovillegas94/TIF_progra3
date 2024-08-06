@@ -15,46 +15,54 @@ const ListaAlbums = () => {
     const [errorMessage, setErrorMessage] = useState('');
 
     useEffect(() => {
-        const fetchAlbums = async (url) => {
-            const response = await fetch(url);
-            const data = await response.json();
-            setAlbums(prevAlbums => [...prevAlbums, ...data.results]);
-            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-            if (data.next) {
-                fetchAlbums(data.next);
+        const fetchAlbums = async () => {
+            try {
+                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums?page=${currentPage}&page_size=${ITEMS_PER_PAGE}`);
+                const data = await response.json();
+                setAlbums(data.results);
+                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+                setErrorMessage('');
+            } catch (error) {
+                console.error("Error fetching albums: ", error);
+                setErrorMessage('Error al cargar álbumes.');
             }
         };
-        fetchAlbums('https://sandbox.academiadevelopers.com/harmonyhub/albums/');
-    }, []);
 
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const albumsToShow = searchResult ? [searchResult] : albums.slice(startIndex, endIndex);
+        // Solo hace la búsqueda si no hay resultado de búsqueda
+        if (!searchResult) {
+            fetchAlbums();
+        }
+    }, [currentPage, searchResult]);
 
     const handlePageChange = (newPage) => {
-        if (newPage < 1 || newPage > totalPages) return;
-        setCurrentPage(newPage);
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
     };
 
     const handleSearch = async () => {
         if (!searchQuery) return;
         try {
-            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${searchQuery}/`);
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums?title=${searchQuery}`);
             if (response.ok) {
                 const data = await response.json();
-                setSearchResult(data);
-                setErrorMessage('');
-            } else if (response.status === 404) {
-                setSearchResult(null);
-                setErrorMessage('No tenemos lo que buscas.');
+                if (data.results.length > 0) {
+                    setSearchResult(data.results[0]); // Suponiendo que queremos solo el primer resultado
+                    setErrorMessage('');
+                    setTotalPages(1); // Resetear totalPages a 1 para mostrar solo el resultado
+                    setCurrentPage(1); // Resetear página actual al resultado de búsqueda
+                } else {
+                    setSearchResult(null);
+                    setErrorMessage('No tenemos lo que buscas.');
+                }
             } else {
                 setSearchResult(null);
-                setErrorMessage('Error al buscar la canción.');
+                setErrorMessage('Error al buscar el álbum.');
             }
         } catch (error) {
             console.error("Error en la búsqueda: ", error);
             setSearchResult(null);
-            setErrorMessage('Error al buscar la canción.');
+            setErrorMessage('Error al buscar el álbum.');
         }
     };
 
@@ -68,7 +76,18 @@ const ListaAlbums = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
+        setCurrentPage(1); // Resetear a la página 1 al limpiar búsqueda
     };
+
+    // Calcula el rango de álbumes a mostrar según la página actual
+    const getAlbumsToShow = () => {
+        if (searchResult) {
+            return [searchResult]; // Si hay un resultado de búsqueda, mostrar solo ese
+        }
+        return albums;
+    };
+
+    const albumsToShow = getAlbumsToShow();
 
     return (
         <div className='lista-albumes'>
@@ -83,7 +102,7 @@ const ListaAlbums = () => {
                         type='text'
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
-                        placeholder='Inserte el ID para buscar un álbum'
+                        placeholder='Inserte el título para buscar un álbum'
                         className='search-input'
                     />
                     <button type='submit' onClick={handleSearch} className='search-button'>
@@ -102,42 +121,44 @@ const ListaAlbums = () => {
                         <Album key={searchResult.id} album={searchResult} />
                     )}
                     <button className='pagination-button' onClick={handleClearSearch}>
-                        Volver a albums
+                        Volver a álbumes
                     </button>
                 </div>
             ) : albumsToShow.length > 0 ? (
                 <>
                     <div className='albums-list'>
-                        {albumsToShow.map(album => (
+                        {albumsToShow.map((album) => (
                             <div className='album-card' key={album.id}>
                                 <Album album={album} />
                             </div>
                         ))}
                     </div>
-                    <div className='pagination'>
-                        <button
-                            className='pagination-button'
-                            onClick={() => handlePageChange(currentPage - 1)}
-                            disabled={currentPage === 1}
-                        >
-                            <FaChevronLeft />
-                        </button>
-                        <span className='pagination-number'>{currentPage}</span>
-                        <button
-                            className='pagination-button'
-                            onClick={() => handlePageChange(currentPage + 1)}
-                            disabled={currentPage === totalPages}
-                        >
-                            <FaChevronRight />
-                        </button>
-                    </div>
+                    {totalPages > 1 && (
+                        <div className='pagination'>
+                            <button
+                                className='pagination-button'
+                                onClick={() => handlePageChange(currentPage - 1)}
+                                disabled={currentPage === 1}
+                            >
+                                <FaChevronLeft />
+                            </button>
+                            <span className='pagination-number'>{currentPage}</span>
+                            <button
+                                className='pagination-button'
+                                onClick={() => handlePageChange(currentPage + 1)}
+                                disabled={currentPage === totalPages}
+                            >
+                                <FaChevronRight />
+                            </button>
+                        </div>
+                    )}
                 </>
             ) : (
                 <div className='no-encontrada'>
                     <img src={elementoNoEncontrado} alt='No encontrado' className="no-encontrada-img" />
                     <div className='no-encontrada-message'>No tenemos lo que buscas</div>
                     <button className='pagination-button' onClick={handleClearSearch}>
-                        Volver a albums
+                        Volver a álbumes
                     </button>
                 </div>
             )}
