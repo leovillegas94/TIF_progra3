@@ -18,25 +18,25 @@ const ListaCanciones = () => {
 
 
     useEffect(() => {
-        const fetchCanciones = async (url) => {
-            const response = await fetch(url);
-            const data = await response.json();
-            setCanciones(prevCanciones => [...prevCanciones, ...data.results]);
-            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-            if (data.next) {
-                fetchCanciones(data.next);
+        const fetchCanciones = async () => {
+            try {
+                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs?page=${currentPage}&page_size=${ITEMS_PER_PAGE}`);
+                const data = await response.json();
+                setCanciones(data.results);
+                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+                setErrorMessage('');
+            } catch (error) {
+                console.error("Error fetching songs: ", error);
+                setErrorMessage('Error al cargar canciones.');
             }
         };
-        fetchCanciones('https://sandbox.academiadevelopers.com/harmonyhub/songs');
-    }, []);
-
-    const startIndex = (currentPage - 1) * ITEMS_PER_PAGE;
-    const endIndex = startIndex + ITEMS_PER_PAGE;
-    const cancionesToShow = searchResult ? [searchResult] : canciones.slice(startIndex, endIndex);
+        fetchCanciones();
+    }, [currentPage]);
 
     const handlePageChange = (newPage) => {
-        if (newPage < 1 || newPage > totalPages) return;
-        setCurrentPage(newPage);
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
     };
 
     const handleSearch = async () => {
@@ -47,6 +47,7 @@ const ListaCanciones = () => {
                 const data = await response.json();
                 setSearchResult(data);
                 setErrorMessage('');
+                setCanciones([]); 
             } else if (response.status === 404) {
                 setSearchResult(null);
                 setErrorMessage('No tenemos lo que buscas.');
@@ -71,8 +72,10 @@ const ListaCanciones = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
+        setCurrentPage(1); 
     };
 
+<<<<<<< HEAD
     const handleAdd = async() => {
         const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/`
         try{
@@ -88,6 +91,9 @@ const ListaCanciones = () => {
             setErrorMessage('Error al agregar cancion.');
         }
     };
+=======
+    const cancionesToShow = searchResult ? [searchResult] : canciones;
+>>>>>>> origin/develop
 
     return (
         <div className="lista-canciones">
