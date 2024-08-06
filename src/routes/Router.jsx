@@ -8,6 +8,7 @@ import Albums from "../components/Albums";
 import NotFound from "../components/NotFound";
 import ProtectedRoute from './ProtectedRoute';
 import AgregarArtista from '../components/AgregarArtista';
+import Perfil from '../components/Perfil';
 
 
 const router = createBrowserRouter([
@@ -35,7 +36,6 @@ const router = createBrowserRouter([
                         ),
                     },
                 ],
-                
             },
             {
                 path: "/login",
@@ -44,6 +44,10 @@ const router = createBrowserRouter([
             {
                 path: "/albums",
                 element: <Albums />
+            },
+            {
+                path: "/perfil",
+                element: <Perfil/>
             }
         ]
     },

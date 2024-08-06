@@ -6,11 +6,11 @@ import './NavBar.css';
 
 export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
-    const { state, actions } = useAuth();
+    const state = useAuth("state");
     const { isAuthenticated, user } = state;
     const navigate = useNavigate();
     const menuRef = useRef(null);
-
+    const actions = useAuth("actions");
     const handleMenuToggle = () => {
         setShowMenu(prev => !prev);
     };
