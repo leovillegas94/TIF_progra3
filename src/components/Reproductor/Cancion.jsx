@@ -6,7 +6,7 @@ import { useAuth } from '../Contexts/AuthContext';
 export default function Cancion({ song }) {
     const { state } = useAuth();
     console.log(state)
-    
+
     const handleDeleteSong = async (id) => {
         const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
         try {

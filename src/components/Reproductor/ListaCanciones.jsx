@@ -75,28 +75,13 @@ const ListaCanciones = () => {
         setCurrentPage(1); 
     };
 
-    const handleAdd = async() => {
-        const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/`
-        try{
-            const response = await fetch(URL, {
-                method: 'POST',
-                headers: {
-                  Authorization: `Token ${state.token}`,
-                }
-              })
-        } catch (error) {
-            console.error("Error al agregar la cancion: ", error);
-            setSearchResult(null);
-            setErrorMessage('Error al agregar cancion.');
-        }
-    };
     const cancionesToShow = searchResult ? [searchResult] : canciones;
 
     return (
         <div className="lista-canciones">
             <div className='top-bar'>
                 <div className="agregar-cancion">
-                    <button className="add-button" onClick={handleAdd}>
+                    <button className="add-button">
                         <FaPlus /> Agregar
                     </button>
                 </div>
