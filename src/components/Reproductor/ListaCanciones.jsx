@@ -75,7 +75,6 @@ const ListaCanciones = () => {
         setCurrentPage(1); 
     };
 
-<<<<<<< HEAD
     const handleAdd = async() => {
         const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/`
         try{
@@ -91,9 +90,7 @@ const ListaCanciones = () => {
             setErrorMessage('Error al agregar cancion.');
         }
     };
-=======
     const cancionesToShow = searchResult ? [searchResult] : canciones;
->>>>>>> origin/develop
 
     return (
         <div className="lista-canciones">
