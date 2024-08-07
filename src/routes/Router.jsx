@@ -11,6 +11,8 @@ import ProtectedRoute from './ProtectedRoute';
 import AgregarArtista from '../components/AgregarArtista';
 import EditarArtista from '../components/EditarArtista';
 import Perfil from '../components/Perfil';
+import AgregarAlbum from '../components/Albums/AgregarAlbum';
+import EditarAlbum from '../components/Albums/EditarAlbum';
 
 
 
@@ -61,6 +63,22 @@ const router = createBrowserRouter([
             {
                 path: "albums",
                 element: <Albums />
+            },
+            {
+                path: "/albums/agregar",
+                element: (
+                    <ProtectedRoute>
+                        <AgregarAlbum />
+                    </ProtectedRoute>
+                ),
+            },
+            {
+                path: "/albums/editar/:id",
+                element: (
+                    <ProtectedRoute>
+                        <EditarAlbum />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "/perfil",

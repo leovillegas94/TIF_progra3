@@ -6,7 +6,7 @@ import './NavBar.css';
 
 export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
-    const { state, actions } = useAuth();
+    const { state, actions } = useAuth(); // Obtén el contexto completo
     const { isAuthenticated, user } = state;
     const navigate = useNavigate();
     const menuRef = useRef(null);
@@ -51,7 +51,7 @@ export default function NavBar() {
                             aria-expanded={showMenu}
                             aria-controls="navBar-dropdown"
                         />
-                        <span className="navbar-username">{user.username}</span>
+                        <Link to="/perfil" className="navbar-username">{user.username}</Link>
                         {showMenu && (
                             <div className='navbar-dropdown' ref={menuRef}>
                                 <button onClick={handleLogout} className='navbar-dropdown-item'>

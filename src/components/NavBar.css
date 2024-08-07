@@ -34,12 +34,17 @@
 
 .navbar-link:hover {
     text-decoration: underline;
+    color: black;
+    background-color: #76ff7a;
+    font-weight: bold;
+    border-radius: 15px;
 }
 
 .navbar-user {
     display: flex;
     align-items: center;
     position: relative;
+    margin: 0 10px;
 }
 
 .navbar-user-icon {
@@ -49,6 +54,16 @@
 
 .navbar-username {
     margin-left: 10px;
+    color: #fff;
+    text-decoration: none;
+}
+
+.navbar-username:hover {
+    text-decoration: underline;
+    color: black;
+    background-color: #76ff7a;
+    font-weight: bold;
+    border-radius: 15px;
 }
 
 .navbar-dropdown {

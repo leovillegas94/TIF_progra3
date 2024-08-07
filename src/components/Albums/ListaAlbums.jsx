@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import Album from './Album';
 import elementoNoEncontrado from '../../assets/elemento_no_encontrado.jpg';
 import './ListaAlbum.css';
@@ -28,7 +29,6 @@ const ListaAlbums = () => {
             }
         };
 
-        // Solo hace la búsqueda si no hay resultado de búsqueda
         if (!searchResult) {
             fetchAlbums();
         }
@@ -47,10 +47,10 @@ const ListaAlbums = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.results.length > 0) {
-                    setSearchResult(data.results[0]); // Suponiendo que queremos solo el primer resultado
+                    setSearchResult(data.results[0]); 
                     setErrorMessage('');
-                    setTotalPages(1); // Resetear totalPages a 1 para mostrar solo el resultado
-                    setCurrentPage(1); // Resetear página actual al resultado de búsqueda
+                    setTotalPages(1);
+                    setCurrentPage(1);
                 } else {
                     setSearchResult(null);
                     setErrorMessage('No tenemos lo que buscas.');
@@ -76,13 +76,16 @@ const ListaAlbums = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
-        setCurrentPage(1); // Resetear a la página 1 al limpiar búsqueda
     };
 
-    // Calcula el rango de álbumes a mostrar según la página actual
+    const handleDelete = (id) => {
+        setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== id));
+        setCurrentPage(1);
+    }
+
     const getAlbumsToShow = () => {
         if (searchResult) {
-            return [searchResult]; // Si hay un resultado de búsqueda, mostrar solo ese
+            return [searchResult]; 
         }
         return albums;
     };
@@ -92,11 +95,11 @@ const ListaAlbums = () => {
     return (
         <div className='lista-albumes'>
             <div className='top-bar'>
-                <div className='agregar-album'>
+                <Link to="/albums/agregar" className='agregar-album'>
                     <button className='add-button'>
                         <FaPlus /> Agregar
                     </button>
-                </div>
+                </Link>
                 <div className='search-container'>
                     <input
                         type='text'
@@ -118,7 +121,7 @@ const ListaAlbums = () => {
                             <div className='no-encontrada-message'>{errorMessage}</div>
                         </>
                     ) : (
-                        <Album key={searchResult.id} album={searchResult} />
+                        <Album key={searchResult.id} album={searchResult} onDelete={handleDelete} />
                     )}
                     <button className='pagination-button' onClick={handleClearSearch}>
                         Volver a álbumes

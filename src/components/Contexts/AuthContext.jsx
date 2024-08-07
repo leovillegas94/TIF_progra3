@@ -12,7 +12,6 @@ const ACTIONS = {
 };
 
 function reducer(state, action) {
-    console.log('reducer action: ', action)
     switch (action.type) {
         case ACTIONS.LOGIN:
             return {
@@ -39,22 +38,18 @@ function AuthProvider({ children }) {
         user: JSON.parse(localStorage.getItem("user")),
         isAuthenticated: localStorage.getItem("authToken") ? true : false,
     });
-    console.log('initial state: ', state);
     const navigate = useNavigate();
     const location = useLocation();
 
     const actions = {
         login: (token, user) => {
-            console.log('login action: ', { token, user });
             dispatch({ type: ACTIONS.LOGIN, payload: { token, user } });
             localStorage.setItem("authToken", token);
             localStorage.setItem("user", JSON.stringify(user));
             const origin = location.state?.from?.pathname || "/";
-            console.log('redirecting to:', origin);
             navigate(origin);
         },
         logout: () => {
-            console.log("logout action");
             dispatch({ type: ACTIONS.LOGOUT });
             localStorage.removeItem("authToken");
             localStorage.removeItem("user");
@@ -72,7 +67,7 @@ function AuthProvider({ children }) {
 function useAuth() {
     const context = useContext(AuthContext);
     if (context === undefined) {
-        throw new Error("useAuth Siempre debe usarse useAuth con el AuthProvider");
+        throw new Error("useAuth debe usarse dentro de un AuthProvider");
     }
     return context;
 }

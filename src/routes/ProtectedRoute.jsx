@@ -3,11 +3,11 @@ import { useAuth } from '../components/Contexts/AuthContext';
 import IniciarSesion from '../components/IniciarSesion';
 
 export default function ProtectedRoute({ children }) {
-    const { state } = useAuth();
+    const { state } = useAuth();  
     const { isAuthenticated } = state;
 
     if (!isAuthenticated) {
-        return <IniciarSesion />
+        return <IniciarSesion />;
     }
 
     return children;
