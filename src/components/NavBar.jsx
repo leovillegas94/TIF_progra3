@@ -6,8 +6,7 @@ import './NavBar.css';
 
 export default function NavBar() {
     const [showMenu, setShowMenu] = useState(false);
-    const state= useAuth("state");
-    const actions= useAuth("actions");
+    const { state, actions } = useAuth(); // Obtén el contexto completo
     const { isAuthenticated, user } = state;
     const navigate = useNavigate();
     const menuRef = useRef(null);

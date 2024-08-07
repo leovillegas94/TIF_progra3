@@ -5,10 +5,10 @@ import './Login.css';
 
 const Login = () => {
     const [isLoading, setIsLoading] = useState(false);
-    const [error, setError] = useState('')
+    const [error, setError] = useState('');
     const usernameRef = useRef();
     const passwordRef = useRef();
-    const { actions } = useAuth(); 
+    const { actions } = useAuth();
     const navigate = useNavigate();
 
     const handleSubmit = async (event) => {
@@ -33,12 +33,17 @@ const Login = () => {
                 }
 
                 const data = await response.json();
+                console.log('Respuesta del servidor:', data); // Verifica la respuesta aquí
                 const { token } = data;
 
-                actions.login(token, { username: usernameRef.current.value });
-                navigate('/');
+                if (token) {
+                    actions.login(token, { username: usernameRef.current.value });
+                    navigate('/');
+                } else {
+                    throw new Error('Token de autenticación no recibido');
+                }
             } catch (error) {
-                BiSolidCommentError('Error en el inicio de sesión. Verifica tus credenciales')
+                setError('Error en el inicio de sesión. Verifica tus credenciales');
                 console.error("Error en el inicio de sesión", error);
             } finally {
                 setIsLoading(false);
@@ -55,6 +60,7 @@ const Login = () => {
                 <button type="submit" disabled={isLoading}>
                     {isLoading ? 'Cargando...' : 'Login'}
                 </button>
+                {error && <p className="error">{error}</p>}
             </form>
         </div>
     );
