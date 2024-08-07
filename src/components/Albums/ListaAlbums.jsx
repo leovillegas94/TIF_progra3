@@ -29,7 +29,6 @@ const ListaAlbums = () => {
             }
         };
 
-        // Solo hace la búsqueda si no hay resultado de búsqueda
         if (!searchResult) {
             fetchAlbums();
         }
@@ -48,10 +47,10 @@ const ListaAlbums = () => {
             if (response.ok) {
                 const data = await response.json();
                 if (data.results.length > 0) {
-                    setSearchResult(data.results[0]); // Suponiendo que queremos solo el primer resultado
+                    setSearchResult(data.results[0]); 
                     setErrorMessage('');
-                    setTotalPages(1); // Resetear totalPages a 1 para mostrar solo el resultado
-                    setCurrentPage(1); // Resetear página actual al resultado de búsqueda
+                    setTotalPages(1);
+                    setCurrentPage(1);
                 } else {
                     setSearchResult(null);
                     setErrorMessage('No tenemos lo que buscas.');
@@ -77,8 +76,12 @@ const ListaAlbums = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
-        setCurrentPage(1); 
     };
+
+    const handleDelete = (id) => {
+        setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== id));
+        setCurrentPage(1);
+    }
 
     const getAlbumsToShow = () => {
         if (searchResult) {
@@ -118,7 +121,7 @@ const ListaAlbums = () => {
                             <div className='no-encontrada-message'>{errorMessage}</div>
                         </>
                     ) : (
-                        <Album key={searchResult.id} album={searchResult} />
+                        <Album key={searchResult.id} album={searchResult} onDelete={handleDelete} />
                     )}
                     <button className='pagination-button' onClick={handleClearSearch}>
                         Volver a álbumes
