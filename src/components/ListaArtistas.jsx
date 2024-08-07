@@ -1,6 +1,5 @@
 import { useEffect, useState } from 'react';
-import { FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
-import { IoIosAddCircle } from 'react-icons/io';
+import { FaChevronLeft, FaChevronRight, FaSearch, FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Artista from './Artista';
 import elementoNoEncontrado from '../assets/elemento_no_encontrado.jpg';
@@ -80,9 +79,8 @@ const ListaArtistas = () => {
     return (
         <div className="lista-artistas">
             <div className='top-bar'>
-                <Link to='/artistas/agregar' className="agregar-artista">
-                    Nuevo 
-                    <IoIosAddCircle />
+                <Link to='/artistas/agregar' className="add-button">
+                    <FaPlus /> Agregar 
                 </Link>
                 <div className='search-container'>
                     <input

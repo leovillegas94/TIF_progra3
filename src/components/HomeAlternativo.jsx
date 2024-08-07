@@ -1,6 +1,5 @@
 import React, { useEffect, useState } from "react";
 import Cancion from './Reproductor/Cancion';
-import { SiNiconico } from "react-icons/si";
 import "./HomeAlternativo.css"
 
 const HomeAlternativo = () => {

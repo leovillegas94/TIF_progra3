@@ -63,6 +63,7 @@
     color: black;
     background-color: #76ff7a;
     font-weight: bold;
+    border-radius: 15px;
 }
 
 .navbar-dropdown {
