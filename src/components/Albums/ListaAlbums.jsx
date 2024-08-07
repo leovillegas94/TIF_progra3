@@ -1,5 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { FaPlus, FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
+import { Link } from 'react-router-dom';
 import Album from './Album';
 import elementoNoEncontrado from '../../assets/elemento_no_encontrado.jpg';
 import './ListaAlbum.css';
@@ -76,13 +77,12 @@ const ListaAlbums = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
-        setCurrentPage(1); // Resetear a la página 1 al limpiar búsqueda
+        setCurrentPage(1); 
     };
 
-    // Calcula el rango de álbumes a mostrar según la página actual
     const getAlbumsToShow = () => {
         if (searchResult) {
-            return [searchResult]; // Si hay un resultado de búsqueda, mostrar solo ese
+            return [searchResult]; 
         }
         return albums;
     };
@@ -92,11 +92,11 @@ const ListaAlbums = () => {
     return (
         <div className='lista-albumes'>
             <div className='top-bar'>
-                <div className='agregar-album'>
+                <Link to="/albums/agregar" className='agregar-album'>
                     <button className='add-button'>
                         <FaPlus /> Agregar
                     </button>
-                </div>
+                </Link>
                 <div className='search-container'>
                     <input
                         type='text'
