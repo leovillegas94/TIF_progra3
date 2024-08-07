@@ -1,7 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AgregarArtista.css';
-import { useAuth } from '../components/Contexts/AuthContext'; 
+import { useAuth } from './Contexts/AuthContext';
 
 const AgregarArtista = () => {
     const [nombre, setNombre] = useState('');
@@ -11,16 +11,18 @@ const AgregarArtista = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate(); 
-    const { state } = useAuth(); 
-    const token = state?.token; 
+    const token = useAuth("state")
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     }
-
+    
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);
         setError(null);
+
+        //const token = localStorage.getItem('authToken');
+        //console.log('Auth Token', token);
 
         const formData = new FormData();
         formData.append('name', nombre);
@@ -46,11 +48,11 @@ const AgregarArtista = () => {
 
             const newArtist = await response.json();
             console.log('Artist created:', newArtist);
-            alert('Artista creado con éxito');
+            alert('Artista creado con éxito')
             navigate('/artistas');
         } catch (error) {
             console.error('Error creating artist:', error);
-            setError('Error al crear el artista.');
+            setError('Error creating artist.');
         } finally {
             setLoading(false);
         }
