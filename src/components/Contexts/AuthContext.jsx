@@ -69,12 +69,12 @@ function AuthProvider({ children }) {
     );
 }
 
-function useAuth() {
+function useAuth(type) {
     const context = useContext(AuthContext);
     if (context === undefined) {
         throw new Error("useAuth Siempre debe usarse useAuth con el AuthProvider");
     }
-    return context;
+    return context[type];
 }
 
 export { AuthContext, AuthProvider, useAuth };

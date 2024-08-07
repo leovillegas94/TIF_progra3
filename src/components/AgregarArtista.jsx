@@ -1,6 +1,7 @@
 import React, { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AgregarArtista.css';
+import { useAuth } from './Contexts/AuthContext';
 
 const AgregarArtista = () => {
     const [nombre, setNombre] = useState('');
@@ -10,6 +11,7 @@ const AgregarArtista = () => {
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
     const navigate = useNavigate(); 
+    const token = useAuth("state")
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     }
@@ -19,8 +21,8 @@ const AgregarArtista = () => {
         setLoading(true);
         setError(null);
 
-        const token = localStorage.getItem('authToken');
-        console.log('Auth Token', token);
+        //const token = localStorage.getItem('authToken');
+        //console.log('Auth Token', token);
 
         const formData = new FormData();
         formData.append('name', nombre);
