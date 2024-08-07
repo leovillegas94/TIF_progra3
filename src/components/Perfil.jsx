@@ -1,21 +1,24 @@
-import { useState, useEffect , useContext} from "react";
-import { useAuth, AuthContext } from "./Contexts/AuthContext";
+import { useState, useEffect , useRef} from "react";
+import { useAuth } from "./Contexts/AuthContext";
 import FotoPerfil from "../assets/Profile.jpg"
+import "../components/Perfil.css"
+import {FaEdit } from 'react-icons/fa';
 
 
 function Perfil() {
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
-    /* const context = useContext(AuthContext);
-    const {token} = context.state;
-    console.log(context.state);
- */
-
-    
     const {token} = useAuth("state");
-    //console.log(token);
- 
+    const [editMode, setEditMode] = useState(false);
+    const [loadingUpdate, setLoadingUpdate] = useState (false)
+
+    const firstNameRef = useRef(null);
+    const lastNameRef = useRef(null);
+    const emailRef = useRef(null);
+    const dobRef = useRef(null);
+    const bioRef = useRef(null);
+
     useEffect(() => {
         fetch(
             `https://sandbox.academiadevelopers.com/users/profiles/profile_data/`,
@@ -43,40 +46,141 @@ function Perfil() {
             });
     }, []);
 
+
+    function handleSubmit(event) {
+        event.preventDefault();
+        setLoadingUpdate(true)
+        setError(null)
+        updateProfile(
+            `https://sandbox.academiadevelopers.com/users/profiles/${
+                userData.user__id
+            }`,
+            {
+                method: "PATCH",
+                headers: {
+                    "Content-Type": "application/json",
+                    Authorization: `Token ${token}`,
+                },
+                body: JSON.stringify({
+                    first_name: firstNameRef.current.value,
+                    last_name: lastNameRef.current.value,
+                    email: emailRef.current.value,
+                    dob: dobRef.current.value,
+                    bio: bioRef.current.value,
+                }),
+            }
+        );
+    }
+
+    function handleEditMode() {
+        setEditMode(!editMode);
+    }
+
     if (loading) return <p>Cargando perfil...</p>;
     if (error) return <p>Error: {error}</p>;
 
     return (
-        <div>
+        <div className="perfil">
             {userData ? (
                 <>
-                    <form >
-                        <div >
+                    <form className= "form" onSubmit={handleSubmit}>
+                        <div className="div-perfil" >
                             <div >
-                                <figure className="image is-48x48">
-                                    <img
+                                <figure className="figure">
+                                    <img className="image"
                                         src={
                                             userData.image ||
                                             FotoPerfil
                                         }
                                         alt="Profile image"
-                                        
                                     />
                                 </figure>
                             </div>
-                            <div className="media-content">
-                                <p className="title is-4 pb-2">
-                                    {userData.first_name} {userData.last_name}
-                                </p>
+                            <div className="name-profile">
+                                {editMode ? (
+                                    <div>
+                                        <input
+                                            type="text"
+                                            ref={firstNameRef}
+                                            defaultValue={userData.first_name}
+                                        />
+                                        <input
+                                            type="text"
+                                            ref={lastNameRef}
+                                            defaultValue={userData.last_name}
+                                        />
+                                    </div>
+                                ):(
+                                    <p >
+                                        {firstNameRef.current?.value || userData.first_name}{" "}
+                                        {lastNameRef.current?.value || userData.last_name}
+                                    </p>
+                                )}
                             </div>
+                            <button className="button-perfil" onClick={handleEditMode}
+                            >
+                                <FaEdit /> {!editMode ? "Modificar" : "Salir"}
+                            </button>
                         </div>
 
                         <div className="content">
-                            Email: {userData.email}
-                            <br />
-                            Fecha de Nacimiento: {userData.dob}
-                            <br />
-                            Biografía: {userData.bio || "No disponible"}
+                            <div>
+                                <label className="label-perfil" > Email:</label>
+                                <div>
+                                    <input
+                                        className="input-perfil"
+                                        type="email"
+                                        id="email"
+                                        name="email"
+                                        ref={emailRef}
+                                        defaultValue={userData.email}
+                                        disabled={!editMode}
+                                   />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="label-perfil"> Fecha de Nacimiento:</label>
+                                <div>
+                                    <input
+                                        className="input-perfil"
+                                        type="date"
+                                        id="dob"
+                                        name="dob"
+                                        ref={dobRef}
+                                        defaultValue={userData.dob}
+                                        disabled={!editMode}
+                                   />
+                                </div>
+                            </div>
+                            <div>
+                                <label className="label-perfil"> Biografía:</label>
+                                <div>
+                                    <input
+                                        className="input-perfil"
+                                        type="textarea"
+                                        id="bio"
+                                        name="bio"
+                                        ref={bioRef}
+                                        defaultValue={userData.bio || "Contanos de vos..."}
+                                        disabled={!editMode}
+                                   />
+                                </div>
+                            </div>
+                            {editMode ? (
+                                <div>
+                                    <button
+                                        className="button-perfil"
+                                        type="submit"
+                                    >
+                                        {loadingUpdate
+                                            ? "Enviando..."
+                                            : "Enviar"}
+                                        {error
+                                            ? "Ocurrió un error al enviar el formulario"
+                                            : null}
+                                    </button>
+                                </div>
+                            ) : null}
                         </div>
                     </form>
                 </>
