@@ -45,7 +45,7 @@ export default function Artista({ artist, onDelete }) {
                 <img src={artist.image || FotoArtista} alt={artist.name} />
             </div>
             <div className="artist-name">
-                <h2>{artist.name} #{artist.id}</h2>
+                <h2>#{artist.id} - {artist.name} </h2>
                 <p className="artist-bio">{artist.bio}</p>
             </div>
             <div className="button-options">
