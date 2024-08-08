@@ -1,35 +1,35 @@
 import React from "react";
 import {FaEdit, FaTrash} from 'react-icons/fa';
 import './Cancion.css';
-import { useAuth } from '../Contexts/AuthContext';
+import { useNavigate } from 'react-router-dom';
 
-export default function Cancion({ song }) {
-    const { state } = useAuth();
-    console.log(state)
-
-    const handleDeleteSong = async (id) => {
-        const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
-        try {
-          const response = await fetch(URL, {
-            method: 'DELETE',
-            headers: {
-              Authorization: `Token ${state.token}`,
+export default function Cancion({ song, onDelete }) {
+    const navigate = useNavigate();
+    
+    const handleDeleteSongFromAPI = async (id) => {
+        if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
+            const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
+            const token = localStorage.getItem('authToken');
+            try {
+                const response = await fetch(URL, {
+                    method: 'DELETE',
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    }
+                });
+                console.log('Respuesta de la API:', response);
+                if (response.ok || response.status === 404) {
+                    alert('Canción eliminada exitosamente');
+                    if (onDelete) onDelete(id);
+                } else {
+                    throw new Error('Error al eliminar la canción');
+                }
+            } catch (error) {
+                console.error('Error al eliminar la canción:', error.message);
+                alert('Error al eliminar la canción: ' + error.message);
             }
-          });
-          
-          console.log('Respuesta de la API:', response);
-      
-          if (!response.ok) {
-            const errorData = await response.json();
-            console.error('Detalles del error:', errorData);
-            throw new Error(`No se pudo eliminar la canción. Estado: ${response.status}`);
-          }
-      
-          console.log('Canción eliminada con éxito');
-        } catch (error) {
-          console.error('Error al eliminar la canción:', error.message);
         }
-      }
+    };
 
     return (
         <div className="track">
@@ -51,7 +51,7 @@ export default function Cancion({ song }) {
                 <button className="edit-button">
                     <FaEdit /> Modificar
                 </button>
-                <button className="delete-button" onClick={() => handleDeleteSong(song.id)}>
+                <button className="delete-button" onClick={() => handleDeleteSongFromAPI(song.id)}>
                     <FaTrash /> Eliminar
                 </button>
             </div>
