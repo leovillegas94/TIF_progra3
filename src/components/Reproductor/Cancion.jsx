@@ -1,10 +1,8 @@
 import React from "react";
 import {FaEdit, FaTrash} from 'react-icons/fa';
 import './Cancion.css';
-import { useNavigate } from 'react-router-dom';
 
 export default function Cancion({ song, onDelete }) {
-    const navigate = useNavigate();
     
     const handleDeleteSongFromAPI = async (id) => {
         if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
