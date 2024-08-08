@@ -113,7 +113,7 @@ function Perfil() {
                 <>
                     <form className="form" onSubmit={handleSubmit}>
                         <div className="div-perfil">
-                            <div>
+                            <div className="div-img">
                                 <figure className="figure">
                                     <img
                                         className="image"
@@ -156,9 +156,9 @@ function Perfil() {
                         </div>
 
                         <div className="content">
-                            <div>
+                            <div className="div-label">
                                 <label className="label-perfil"> Email:</label>
-                                <div>
+                                <div className="">
                                     <input
                                         className="input-perfil"
                                         type="email"
