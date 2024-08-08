@@ -9,6 +9,7 @@ const ITEMS_PER_PAGE = 6;
 
 const ListaAlbums = () => {
     const [albums, setAlbums] = useState([]);
+    const [artists, setArtists] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -23,6 +24,20 @@ const ListaAlbums = () => {
                 setAlbums(data.results);
                 setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
                 setErrorMessage('');
+
+                const artistIds = [...new Set(data.results.map(album => album.artist))];
+
+                const artistRequests = artistIds.map(id =>
+                    fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`).then(res => res.json())
+                );
+                const artistResponses = await Promise.all(artistRequests);
+
+                const artistMap = artistResponses.reduce((acc, artist) => {
+                    acc[artist.id] = artist.name;
+                    return acc;
+                }, {});
+                setArtists(artistMap);
+
             } catch (error) {
                 console.error("Error fetching albums: ", error);
                 setErrorMessage('Error al cargar álbumes.');
@@ -121,7 +136,7 @@ const ListaAlbums = () => {
                             <div className='no-encontrada-message'>{errorMessage}</div>
                         </>
                     ) : (
-                        <Album key={searchResult.id} album={searchResult} onDelete={handleDelete} />
+                        <Album key={searchResult.id} album={searchResult} artistName={artists[searchResult.artist]} onDelete={handleDelete} />
                     )}
                     <button className='pagination-button' onClick={handleClearSearch}>
                         Volver a álbumes
@@ -132,7 +147,7 @@ const ListaAlbums = () => {
                     <div className='albums-list'>
                         {albumsToShow.map((album) => (
                             <div className='album-card' key={album.id}>
-                                <Album album={album} />
+                                <Album album={album} artistName={artists[album.artist]} onDelete={handleDelete} />
                             </div>
                         ))}
                     </div>

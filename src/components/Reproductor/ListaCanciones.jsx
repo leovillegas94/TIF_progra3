@@ -9,6 +9,8 @@ const ITEMS_PER_PAGE = 3;
 
 const ListaCanciones = () => {
     const [canciones, setCanciones] = useState([]);
+    const [albums, setAlbums] = useState({});
+    const [artists, setArtists] = useState({});
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
@@ -22,9 +24,32 @@ const ListaCanciones = () => {
             const data = await response.json();
             setCanciones(data.results);
             setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+
+            const artistIds = [...new Set(data.results.map(song => song.artist))];
+            const artistResponses = await Promise.all(
+                artistIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`))
+            );
+            const artistData = await Promise.all(artistResponses.map(res => res.json()));
+            const artistMap = artistData.reduce((acc, artist) => {
+                acc[artist.id] = artist.name;
+                return acc;
+            }, {});
+            setArtists(artistMap);
+
+            const albumIds = [...new Set(data.results.map(song => song.album))];
+            const albumResponses = await Promise.all(
+                albumIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}`))
+            );
+            const albumData = await Promise.all(albumResponses.map(res => res.json()));
+            const albumMap = albumData.reduce((acc, album) => {
+                acc[album.id] = album.title;
+                return acc;
+            }, {});
+            setAlbums(albumMap);
+
             setErrorMessage('');
         } catch (error) {
-            console.error("Error fetching songs: ", error);
+            console.error("Error fetching songs or artists: ", error);
             setErrorMessage('Error al cargar canciones.');
         }
     }, [currentPage]);
@@ -122,7 +147,11 @@ const ListaCanciones = () => {
                             <div className="no-encontrada-message">{errorMessage}</div>
                         </>
                     ) : (
-                        <Cancion key={searchResult.id} song={searchResult} onDelete={handleDeleteSongFromList} />
+                        <Cancion
+                            key={searchResult.id}
+                            song={{ ...searchResult, artistName: artists[searchResult.artist], albumTitle: albums[searchResult.album] }}
+                            onDelete={handleDeleteSongFromList}
+                        />
                     )}
                     <button className="pagination-button" onClick={handleClearSearch}>
                         Volver a canciones
@@ -131,7 +160,11 @@ const ListaCanciones = () => {
             ) : cancionesToShow.length > 0 ? (
                 <>
                     {cancionesToShow.map(cancion => (
-                        <Cancion key={cancion.id} song={cancion} onDelete={handleDeleteSongFromList} />
+                        <Cancion
+                            key={cancion.id}
+                            song={{ ...cancion, artistName: artists[cancion.artist], albumTitle: albums[cancion.album] }}
+                            onDelete={handleDeleteSongFromList}
+                        />
                     ))}
                     <div className="pagination">
                         <button

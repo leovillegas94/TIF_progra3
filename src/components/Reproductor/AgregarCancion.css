@@ -16,7 +16,7 @@ html, body {
     background-color: #000; 
     color: #fff; 
     margin: 0; 
-    overflow: hidden;
+    overflow: auto;
 }
 
 .form-container {
@@ -25,12 +25,26 @@ html, body {
     border-radius: 8px;
     box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
     width: 100%;
-    max-width: 600px; 
+    max-width: 800px; 
 }
 
 form {
     display: flex;
     flex-direction: column;
+}
+
+.form-columns {
+    display: flex;
+    justify-content: space-between;
+}
+
+.form-column {
+    flex: 1;
+    margin-right: 20px; 
+}
+
+.form-column:last-child {
+    margin-right: 0; 
 }
 
 label {
@@ -39,29 +53,31 @@ label {
     margin-bottom: 15px; 
 }
 
-input, textarea {
+input, select {
     margin-top: 5px; 
     padding: 10px;
     border-radius: 4px;
     border: 1px solid #555;
 }
 
-.add-artist-button {
+.add-song-button {
     background-color: #76ff7a;
     color: black;
     height: 50px;
+    width: 100%;
     color: #fff;
     border: none;
     cursor: pointer;
-    margin-top: 10px; 
+    margin-top: 10px;
+    border-radius: 50px;
 }
 
-.add-artist-button:disabled {
+.add-song-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-.add-artist-error {
+.add-song-error {
     color: #f00; 
     margin-top: 10px; 
 }
