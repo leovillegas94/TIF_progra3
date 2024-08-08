@@ -1,0 +1,67 @@
+html, body {
+    margin: 0;
+    padding: 0;
+    height: 100%;
+    width: 100%;
+    background-color: black;
+    overflow-x: hidden;
+}
+
+.container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    height: 100vh; 
+    width: 100vw; 
+    background-color: #000; 
+    color: #fff; 
+    margin: 0; 
+    overflow: hidden;
+}
+
+.form-container {
+    background-color: #333; 
+    padding: 20px;
+    border-radius: 8px;
+    box-shadow: 0 4px 8px rgba(0, 0, 0, 0.3);
+    width: 100%;
+    max-width: 600px; 
+}
+
+form {
+    display: flex;
+    flex-direction: column;
+}
+
+label {
+    display: flex;
+    flex-direction: column;
+    margin-bottom: 15px; 
+}
+
+input, textarea {
+    margin-top: 5px; 
+    padding: 10px;
+    border-radius: 4px;
+    border: 1px solid #555;
+}
+
+.add-artist-button {
+    background-color: #76ff7a;
+    color: black;
+    height: 50px;
+    color: #fff;
+    border: none;
+    cursor: pointer;
+    margin-top: 10px; 
+}
+
+.add-artist-button:disabled {
+    background-color: #ccc;
+    cursor: not-allowed;
+}
+
+.add-artist-error {
+    color: #f00; 
+    margin-top: 10px; 
+}
