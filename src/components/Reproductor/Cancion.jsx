@@ -1,8 +1,10 @@
 import React from "react";
 import {FaEdit, FaTrash} from 'react-icons/fa';
 import './Cancion.css';
+import { useNavigate } from 'react-router-dom';
 
 export default function Cancion({ song, onDelete }) {
+  const navigate = useNavigate();
     
     const handleDeleteSongFromAPI = async (id) => {
         if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
@@ -29,6 +31,10 @@ export default function Cancion({ song, onDelete }) {
         }
     };
 
+    const handleEditSong = (id) => {
+      navigate(`/canciones/editar/${id}`);
+  };
+
     return (
         <div className="track">
             <div className="track-id">{song.id}</div>
@@ -46,7 +52,7 @@ export default function Cancion({ song, onDelete }) {
                 </div>
             </div>
             <div className="track-actions">
-                <button className="edit-button">
+                <button className="edit-button" onClick={() => handleEditSong(song.id)}>
                     <FaEdit /> Modificar
                 </button>
                 <button className="delete-button" onClick={() => handleDeleteSongFromAPI(song.id)}>

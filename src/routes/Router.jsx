@@ -13,6 +13,8 @@ import EditarArtista from '../components/EditarArtista';
 import Perfil from '../components/Perfil';
 import AgregarAlbum from '../components/Albums/AgregarAlbum';
 import EditarAlbum from '../components/Albums/EditarAlbum';
+import EditarCancion from '../components/Reproductor/EditarCancion';
+
 
 
 
@@ -35,6 +37,14 @@ const router = createBrowserRouter([
                         <AgregarCancion />
                     </ProtectedRoute>
                 ),
+            },
+            {
+                path: "/canciones/editar/:id",
+                element: (
+                    <ProtectedRoute>
+                        <EditarCancion />
+                    </ProtectedRoute>
+                )
             },
             {
                 path: "/artistas",

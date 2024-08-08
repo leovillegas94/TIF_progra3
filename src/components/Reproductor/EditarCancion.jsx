@@ -1,8 +1,10 @@
 import React, { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import './AgregarCancion.css';
 
-const AgregarCancion = () => {
+const EditarCancion = () => {
+    const { id } = useParams();
+    const navigate = useNavigate();
     const [titulo, setTitulo] = useState('');
     const [anio, setAnio] = useState('');
     const [duracion, setDuracion] = useState('');
@@ -16,14 +18,18 @@ const AgregarCancion = () => {
     const [albumes, setAlbumes] = useState([]);
     const [artistas, setArtistas] = useState([]);
     const [generos, setGeneros] = useState([]);
-    const navigate = useNavigate();
 
     useEffect(() => {
         const fetchData = async () => {
             try {
                 const token = localStorage.getItem('authToken');
 
-                const [albumesResponse, artistasResponse, generosResponse] = await Promise.all([
+                const [cancionResponse, albumesResponse, artistasResponse, generosResponse] = await Promise.all([
+                    fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`, {
+                        headers: {
+                            Authorization: `Token ${token}`,
+                        }
+                    }),
                     fetch('https://sandbox.academiadevelopers.com/harmonyhub/albums/', {
                         headers: {
                             Authorization: `Token ${token}`,
@@ -41,21 +47,28 @@ const AgregarCancion = () => {
                     })
                 ]);
 
+                const cancionData = await cancionResponse.json();
                 const albumesData = await albumesResponse.json();
                 const artistasData = await artistasResponse.json();
                 const generosData = await generosResponse.json();
 
+                setTitulo(cancionData.title || '');
+                setAnio(cancionData.year || '');
+                setDuracion(cancionData.duration || '');
+                setAlbum(cancionData.album || '');
+                setArtista(cancionData.artists?.[0] || '');
+                setGenero(cancionData.genres?.[0] || '');
                 setAlbumes(albumesData.results);
                 setArtistas(artistasData.results);
                 setGeneros(generosData.results);
             } catch (error) {
                 console.error("Error fetching data: ", error);
-                setError("Error al cargar datos de álbumes, artistas o géneros.");
+                setError("Error al cargar datos de la canción, álbumes, artistas o géneros.");
             }
         };
 
         fetchData();
-    }, []);
+    }, [id]);
 
     const handleArchivoCancionChange = (e) => {
         setArchivoCancion(e.target.files[0]);
@@ -85,10 +98,10 @@ const AgregarCancion = () => {
         if (portada) {
             formData.append('cover', portada);
         }
-        
+
         try {
-            const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs/', {
-                method: 'POST',
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`, {
+                method: 'PUT',
                 headers: {
                     Authorization: `Token ${token}`,
                 },
@@ -100,13 +113,13 @@ const AgregarCancion = () => {
                 throw new Error(errorText);
             }
 
-            const nuevaCancion = await response.json();
-            console.log('Canción creada:', nuevaCancion);
-            alert('Canción creada con éxito');
+            const cancionActualizada = await response.json();
+            console.log('Canción actualizada:', cancionActualizada);
+            alert('Canción actualizada con éxito');
             navigate('/canciones');
         } catch (error) {
-            console.error('Error creando la canción:', error);
-            setError('Error creando la canción.');
+            console.error('Error actualizando la canción:', error);
+            setError('Error actualizando la canción.');
         } finally {
             setCargando(false);
         }
@@ -115,7 +128,7 @@ const AgregarCancion = () => {
     return (
         <div className="container">
             <div className="form-container">
-                <h1>Agregar Canción</h1>
+                <h1>Editar Canción</h1>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Título de la Canción:
@@ -217,7 +230,7 @@ const AgregarCancion = () => {
                     </label>
                     <br />
                     <button type="submit" disabled={cargando} className="add-song-button">
-                        {cargando ? 'Agregando...' : 'Agregar'}
+                        {cargando ? 'Actualizando...' : 'Actualizar'}
                     </button>
                     {error && <p className='add-song-error'>{error}</p>}
                 </form>
@@ -226,4 +239,4 @@ const AgregarCancion = () => {
     );
 };
 
-export default AgregarCancion;
+export default EditarCancion;
