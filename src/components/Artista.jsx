@@ -4,6 +4,8 @@ import './Artista.css';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import FotoArtista from "../assets/Artista.jpg";
 
+//Acá se crea el componente Artista
+
 export default function Artista({ artist, onDelete }) {
     const navigate = useNavigate();
 
