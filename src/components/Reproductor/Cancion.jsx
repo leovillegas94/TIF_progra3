@@ -1,11 +1,11 @@
 import React from "react";
-import {FaEdit, FaTrash} from 'react-icons/fa';
+import { FaEdit, FaTrash } from 'react-icons/fa';
 import './Cancion.css';
 import { useNavigate } from 'react-router-dom';
 
 export default function Cancion({ song, onDelete }) {
-  const navigate = useNavigate();
-    
+    const navigate = useNavigate();
+
     const handleDeleteSongFromAPI = async (id) => {
         if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
             const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
@@ -17,7 +17,6 @@ export default function Cancion({ song, onDelete }) {
                         Authorization: `Token ${token}`,
                     }
                 });
-                console.log('Respuesta de la API:', response);
                 if (response.ok || response.status === 404) {
                     alert('Canción eliminada exitosamente');
                     if (onDelete) onDelete(id);
@@ -32,13 +31,12 @@ export default function Cancion({ song, onDelete }) {
     };
 
     const handleEditSong = (id) => {
-      navigate(`/canciones/editar/${id}`);
-  };
+        navigate(`/canciones/editar/${id}`);
+    };
 
-    console.log(song);
     return (
         <div className="track">
-            <div className="track-id">{song.id}</div>
+            <div className="track-id">#{song.id}</div>
             <div className="track-info">
                 <div className="track-details">
                     <h3>{song.title}</h3>

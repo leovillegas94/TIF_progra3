@@ -25,7 +25,7 @@ const ListaCanciones = () => {
             setCanciones(data.results);
             setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
 
-            const artistIds = [...new Set(data.results.map(song => song.artist))];
+            const artistIds = [...new Set(data.results.map(song => song.artist))].filter(id => id);
             const artistResponses = await Promise.all(
                 artistIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`))
             );
@@ -36,7 +36,7 @@ const ListaCanciones = () => {
             }, {});
             setArtists(artistMap);
 
-            const albumIds = [...new Set(data.results.map(song => song.album))];
+            const albumIds = [...new Set(data.results.map(song => song.album))].filter(id => id);
             const albumResponses = await Promise.all(
                 albumIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}`))
             );
@@ -149,7 +149,11 @@ const ListaCanciones = () => {
                     ) : (
                         <Cancion
                             key={searchResult.id}
-                            song={{ ...searchResult, artistName: artists[searchResult.artist], albumTitle: albums[searchResult.album] }}
+                            song={{ 
+                                ...searchResult, 
+                                artistName: artists[searchResult.artist] || 'Desconocido', 
+                                albumTitle: albums[searchResult.album] || 'Desconocido' 
+                            }}
                             onDelete={handleDeleteSongFromList}
                         />
                     )}
@@ -162,7 +166,11 @@ const ListaCanciones = () => {
                     {cancionesToShow.map(cancion => (
                         <Cancion
                             key={cancion.id}
-                            song={{ ...cancion, artistName: artists[cancion.artist], albumTitle: albums[cancion.album] }}
+                            song={{ 
+                                ...cancion, 
+                                artistName: artists[cancion.artist] || 'Desconocido', 
+                                albumTitle: albums[cancion.album] || 'Desconocido' 
+                            }}
                             onDelete={handleDeleteSongFromList}
                         />
                     ))}

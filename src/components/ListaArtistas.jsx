@@ -1,4 +1,4 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useState, useCallback } from 'react';
 import { FaChevronLeft, FaChevronRight, FaSearch, FaPlus } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Artista from './Artista';
@@ -15,34 +15,29 @@ const ListaArtistas = () => {
     const [searchResult, setSearchResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
-    useEffect(() => {
-        const fetchArtistas = async (page = 1) => {
-            try {
-                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?page=${page}&page_size=${ITEMS_PER_PAGE}`);
-                const data = await response.json();
-                setArtistas(data.results);
-                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-                setErrorMessage('');
-            } catch (error) {
-                console.error("Error fetching artists: ", error);
-                setErrorMessage('Error al cargar artistas.');
-            }
-        };
-        fetchArtistas(currentPage);
-    }, [currentPage]);
-
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= totalPages) {
-            setCurrentPage(newPage);
+    // Función para obtener la lista de artistas
+    const fetchArtistas = useCallback(async (page = 1) => {
+        try {
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?page=${page}&page_size=${ITEMS_PER_PAGE}`);
+            const data = await response.json();
+            setArtistas(data.results);
+            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+            setErrorMessage('');
+        } catch (error) {
+            console.error("Error fetching artists: ", error);
+            setErrorMessage('Error al cargar artistas.');
         }
-    };
+    }, []);
 
-    const handleSearch = async () => {
-        if (!searchQuery) return;
+    // Función para buscar artistas
+    const fetchSearchResults = useCallback(async () => {
+        if (!searchQuery.trim()) return;
+
         try {
             const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?name=${encodeURIComponent(searchQuery)}`);
+            const data = await response.json();
+
             if (response.ok) {
-                const data = await response.json();
                 setSearchResult(data.results[0] || null);
                 setErrorMessage('');
             } else if (response.status === 404) {
@@ -57,23 +52,51 @@ const ListaArtistas = () => {
             setSearchResult(null);
             setErrorMessage('Error al buscar el artista.');
         }
-    };
+    }, [searchQuery]);
 
+    // Cargar datos al montar el componente o al cambiar la página o la búsqueda
+    useEffect(() => {
+        if (searchQuery.trim()) {
+            fetchSearchResults();
+        } else {
+            fetchArtistas(currentPage);
+        }
+    }, [currentPage, searchQuery, fetchArtistas, fetchSearchResults]);
+
+    // Función para manejar el cambio de página
+    const handlePageChange = useCallback((newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    }, [totalPages]);
+
+    // Función para manejar el cambio en la consulta de búsqueda
     const handleSearchQueryChange = (e) => {
         setSearchQuery(e.target.value);
         setSearchResult(null);
         setErrorMessage('');
     };
 
+    // Función para manejar la búsqueda
+    const handleSearch = () => {
+        fetchSearchResults();
+    };
+
+    // Función para limpiar la búsqueda
     const handleClearSearch = () => {
         setSearchQuery('');
         setSearchResult(null);
         setErrorMessage('');
+        fetchArtistas(currentPage); // Vuelve a cargar la lista de artistas
     };
 
+    // Función para manejar la eliminación de un artista
     const handleDelete = (id) => {
         setArtistas((prevArtistas) => prevArtistas.filter((artista) => artista.id !== id));
-        setCurrentPage(1); 
+        // Actualizar la lista después de la eliminación
+        if (!searchQuery.trim()) {
+            fetchArtistas(currentPage);
+        }
     };
 
     return (

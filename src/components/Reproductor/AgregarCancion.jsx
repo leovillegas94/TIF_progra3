@@ -8,7 +8,7 @@ const AgregarCancion = () => {
     const [archivoCancion, setArchivoCancion] = useState(null);
     const [portada, setPortada] = useState(null);
     const [album, setAlbum] = useState('');
-    const [artista, setArtista] = useState('');
+    const [artistasSeleccionados, setArtistasSeleccionados] = useState([]);
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const [albumes, setAlbumes] = useState([]);
@@ -73,6 +73,14 @@ const AgregarCancion = () => {
         setPortada(e.target.files[0]);
     };
 
+    const handleArtistaChange = (e) => {
+        const { options } = e.target;
+        const selectedArtistas = Array.from(options)
+            .filter(option => option.selected)
+            .map(option => option.value);
+        setArtistasSeleccionados(selectedArtistas);
+    };
+
     const handleSubmit = async (e) => {
         e.preventDefault();
         setCargando(true);
@@ -84,15 +92,15 @@ const AgregarCancion = () => {
         formData.append('title', titulo);
         formData.append('year', anio);
         formData.append('album', album);
-        formData.append('artists', artista);
         if (archivoCancion) {
             formData.append('song_file', archivoCancion);
         }
         if (portada) {
             formData.append('cover', portada);
         }
-        
+
         try {
+            // Crear la canción
             const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs/', {
                 method: 'POST',
                 headers: {
@@ -108,6 +116,27 @@ const AgregarCancion = () => {
 
             const nuevaCancion = await response.json();
             console.log('Canción creada:', nuevaCancion);
+
+            // Asociar artistas a la canción
+            for (let artistId of artistasSeleccionados) {
+                await associateArtistToSong(nuevaCancion.id, artistId, 'Artista');
+            }
+
+            // Obtener la canción actualizada para verificar la asociación de artistas
+            const updatedSongResponse = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${nuevaCancion.id}/`, {
+                headers: {
+                    Authorization: `Token ${token}`,
+                },
+            });
+
+            if (!updatedSongResponse.ok) {
+                const errorText = await updatedSongResponse.text();
+                throw new Error(errorText);
+            }
+
+            const updatedSong = await updatedSongResponse.json();
+            console.log('Canción actualizada:', updatedSong);
+
             alert('Canción creada con éxito');
             navigate('/canciones');
         } catch (error) {
@@ -115,6 +144,35 @@ const AgregarCancion = () => {
             setError('Error creando la canción.');
         } finally {
             setCargando(false);
+        }
+    };
+
+    const associateArtistToSong = async (songId, artistId, role) => {
+        const URL = 'https://sandbox.academiadevelopers.com/harmonyhub/song-artists/';
+        const token = localStorage.getItem('authToken');
+        try {
+            const response = await fetch(URL, {
+                method: 'POST',
+                headers: {
+                    'Authorization': `Token ${token}`,
+                    'Content-Type': 'application/json'
+                },
+                body: JSON.stringify({
+                    song: songId,
+                    artist: artistId,
+                    role: role
+                })
+            });
+
+            if (!response.ok) {
+                const errorText = await response.text();
+                throw new Error(`Error en la respuesta de la API: ${errorText}`);
+            }
+
+            const result = await response.json();
+            console.log('Artista asociado exitosamente:', result);
+        } catch (error) {
+            console.error('Error al asociar artista a la canción:', error);
         }
     };
 
@@ -163,14 +221,14 @@ const AgregarCancion = () => {
                         </label>
 
                         <label>
-                            Artista:
+                            Artista(s):
                             <select
-                                name="artista"
-                                value={artista}
-                                onChange={(e) => setArtista(e.target.value)}
+                                name="artistas"
+                                multiple
+                                value={artistasSeleccionados}
+                                onChange={handleArtistaChange}
                                 required
                             >
-                                <option value="">Seleccione un artista</option>
                                 {artistas.map(artista => (
                                     <option key={artista.id} value={artista.id}>{artista.name}</option>
                                 ))}
@@ -179,7 +237,6 @@ const AgregarCancion = () => {
                     </div>
 
                     <div className="columna">
-                        
                         <label>
                             Archivo de la Canción:
                             <input

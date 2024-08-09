@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useCallback } from 'react';
 import { FaPlus, FaChevronLeft, FaChevronRight, FaSearch } from 'react-icons/fa';
 import { Link } from 'react-router-dom';
 import Album from './Album';
@@ -13,99 +13,94 @@ const ListaAlbums = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResult, setSearchResult] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
 
-    useEffect(() => {
-        const fetchAlbums = async () => {
-            try {
-                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums?page=${currentPage}&page_size=${ITEMS_PER_PAGE}`);
-                const data = await response.json();
-                setAlbums(data.results);
-                setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
-                setErrorMessage('');
-
-                const artistIds = [...new Set(data.results.map(album => album.artist))];
-
-                const artistRequests = artistIds.map(id =>
-                    fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`).then(res => res.json())
-                );
-                const artistResponses = await Promise.all(artistRequests);
-
-                const artistMap = artistResponses.reduce((acc, artist) => {
-                    acc[artist.id] = artist.name;
-                    return acc;
-                }, {});
-                setArtists(artistMap);
-
-            } catch (error) {
-                console.error("Error fetching albums: ", error);
-                setErrorMessage('Error al cargar álbumes.');
-            }
-        };
-
-        if (!searchResult) {
-            fetchAlbums();
-        }
-    }, [currentPage, searchResult]);
-
-    const handlePageChange = (newPage) => {
-        if (newPage >= 1 && newPage <= totalPages) {
-            setCurrentPage(newPage);
-        }
-    };
-
-    const handleSearch = async () => {
-        if (!searchQuery) return;
+    const fetchAlbums = useCallback(async () => {
         try {
-            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums?title=${searchQuery}`);
-            if (response.ok) {
-                const data = await response.json();
-                if (data.results.length > 0) {
-                    setSearchResult(data.results[0]); 
-                    setErrorMessage('');
-                    setTotalPages(1);
-                    setCurrentPage(1);
-                } else {
-                    setSearchResult(null);
-                    setErrorMessage('No tenemos lo que buscas.');
-                }
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums?page=${currentPage}&page_size=${ITEMS_PER_PAGE}`);
+            const data = await response.json();
+            setAlbums(data.results);
+            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+            setErrorMessage('');
+
+            // Fetch artists for the albums
+            const artistIds = [...new Set(data.results.map(album => album.artist))];
+            const artistRequests = artistIds.map(id =>
+                fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`).then(res => res.json())
+            );
+            const artistResponses = await Promise.all(artistRequests);
+
+            const artistMap = artistResponses.reduce((acc, artist) => {
+                acc[artist.id] = artist.name;
+                return acc;
+            }, {});
+            setArtists(artistMap);
+
+        } catch (error) {
+            console.error("Error fetching albums: ", error);
+            setErrorMessage('Error al cargar álbumes.');
+        }
+    }, [currentPage]);
+
+    const fetchSearchResults = useCallback(async () => {
+        if (!searchQuery.trim()) return;
+        try {
+            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${searchQuery}`);
+            const data = await response.json();
+            if (response.ok && data) {
+                setSearchResults([data]); 
+                setTotalPages(1); // Reset pagination for search results
+                setCurrentPage(1); // Reset to the first page of search results
+                setErrorMessage('');
             } else {
-                setSearchResult(null);
-                setErrorMessage('Error al buscar el álbum.');
+                setSearchResults([]);
+                setErrorMessage('No se encontró el álbum.');
             }
         } catch (error) {
             console.error("Error en la búsqueda: ", error);
-            setSearchResult(null);
+            setSearchResults([]);
             setErrorMessage('Error al buscar el álbum.');
         }
-    };
+    }, [searchQuery]);
 
-    const handleSearchQueryChange = (e) => {
+    useEffect(() => {
+        if (searchQuery) {
+            fetchSearchResults();
+        } else {
+            fetchAlbums();
+        }
+    }, [currentPage, searchQuery, fetchAlbums, fetchSearchResults]);
+
+    const handlePageChange = useCallback((newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    }, [totalPages]);
+
+    const handleSearchQueryChange = useCallback((e) => {
         setSearchQuery(e.target.value);
-        setSearchResult(null);
-        setErrorMessage('');
-    };
+        if (!e.target.value.trim()) {
+            setSearchResults([]);
+            setErrorMessage('');
+            setCurrentPage(1);
+        }
+    }, []);
 
-    const handleClearSearch = () => {
+    const handleClearSearch = useCallback(() => {
         setSearchQuery('');
-        setSearchResult(null);
+        setSearchResults([]);
         setErrorMessage('');
-    };
+        setCurrentPage(1);
+    }, []);
 
-    const handleDelete = (id) => {
+    const handleDelete = useCallback((id) => {
         setAlbums((prevAlbums) => prevAlbums.filter((album) => album.id !== id));
         setCurrentPage(1);
-    }
+        fetchAlbums(); // Refresh the album list after deletion
+    }, [fetchAlbums]);
 
-    const getAlbumsToShow = () => {
-        if (searchResult) {
-            return [searchResult]; 
-        }
-        return albums;
-    };
-
-    const albumsToShow = getAlbumsToShow();
+    const albumsToShow = searchResults.length > 0 ? searchResults : albums;
 
     return (
         <div className='lista-albumes'>
@@ -120,65 +115,65 @@ const ListaAlbums = () => {
                         type='text'
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
-                        placeholder='Inserte el título para buscar un álbum'
+                        placeholder='Ingrese el #ID, sin el # para buscar'
                         className='search-input'
                     />
-                    <button type='submit' onClick={handleSearch} className='search-button'>
+                    <button type='submit' onClick={fetchSearchResults} className='search-button'>
                         <FaSearch />
                     </button>
                 </div>
             </div>
-            {errorMessage || searchResult ? (
+            {errorMessage ? (
                 <div className='no-encontrada'>
-                    {errorMessage ? (
-                        <>
-                            <img src={elementoNoEncontrado} alt='No encontrado' className='no-encontrada-img' />
-                            <div className='no-encontrada-message'>{errorMessage}</div>
-                        </>
-                    ) : (
-                        <Album key={searchResult.id} album={searchResult} artistName={artists[searchResult.artist]} onDelete={handleDelete} />
-                    )}
+                    <img src={elementoNoEncontrado} alt='No encontrado' className='no-encontrada-img' />
+                    <div className='no-encontrada-message'>{errorMessage}</div>
                     <button className='pagination-button' onClick={handleClearSearch}>
                         Volver a álbumes
                     </button>
                 </div>
-            ) : albumsToShow.length > 0 ? (
+            ) : (
                 <>
-                    <div className='albums-list'>
-                        {albumsToShow.map((album) => (
-                            <div className='album-card' key={album.id}>
-                                <Album album={album} artistName={artists[album.artist]} onDelete={handleDelete} />
+                    {albumsToShow.length > 0 ? (
+                        <>
+                            <div className='albums-list'>
+                                {albumsToShow.map((album) => (
+                                    <div className='album-card' key={album.id}>
+                                        <Album album={album} artistName={artists[album.artist]} onDelete={handleDelete} />
+                                    </div>
+                                ))}
                             </div>
-                        ))}
-                    </div>
-                    {totalPages > 1 && (
-                        <div className='pagination'>
-                            <button
-                                className='pagination-button'
-                                onClick={() => handlePageChange(currentPage - 1)}
-                                disabled={currentPage === 1}
-                            >
-                                <FaChevronLeft />
-                            </button>
-                            <span className='pagination-number'>{currentPage}</span>
-                            <button
-                                className='pagination-button'
-                                onClick={() => handlePageChange(currentPage + 1)}
-                                disabled={currentPage === totalPages}
-                            >
-                                <FaChevronRight />
+                            {totalPages > 1 && (
+                                <div className='pagination'>
+                                    <button
+                                        className='pagination-button'
+                                        onClick={() => handlePageChange(currentPage - 1)}
+                                        disabled={currentPage === 1}
+                                        aria-label='Página anterior'
+                                    >
+                                        <FaChevronLeft />
+                                    </button>
+                                    <span className='pagination-number'>{currentPage}</span>
+                                    <button
+                                        className='pagination-button'
+                                        onClick={() => handlePageChange(currentPage + 1)}
+                                        disabled={currentPage === totalPages}
+                                        aria-label='Página siguiente'
+                                    >
+                                        <FaChevronRight />
+                                    </button>
+                                </div>
+                            )}
+                        </>
+                    ) : (
+                        <div className='no-encontrada'>
+                            <img src={elementoNoEncontrado} alt='No encontrado' className="no-encontrada-img" />
+                            <div className='no-encontrada-message'>No tenemos lo que buscas</div>
+                            <button className='pagination-button' onClick={handleClearSearch}>
+                                Volver a álbumes
                             </button>
                         </div>
                     )}
                 </>
-            ) : (
-                <div className='no-encontrada'>
-                    <img src={elementoNoEncontrado} alt='No encontrado' className="no-encontrada-img" />
-                    <div className='no-encontrada-message'>No tenemos lo que buscas</div>
-                    <button className='pagination-button' onClick={handleClearSearch}>
-                        Volver a álbumes
-                    </button>
-                </div>
             )}
         </div>
     );

@@ -1,31 +1,56 @@
-import React, {useState, useEffect} from "react";
+import React, { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import "../AgregarArtista.css";
 
-const EditarAlbum=()=>{
-    const {id}=useParams();
-    const [title, setTitle] = useState("null");
+const EditarAlbum = () => {
+    const { id } = useParams();
+    const [title, setTitle] = useState("");
     const [year, setYear] = useState("");
     const [artist, setArtist] = useState("");
     const [cover, setCover] = useState(null);
     const [loading, setLoading] = useState(false);
     const [error, setError] = useState(null);
+    const [artists, setArtists] = useState([]);
     const navigate = useNavigate();
 
-    useEffect(()=>{
-        const fetchAlbum=async()=>{
-            try{
+    useEffect(() => {
+        const fetchAlbum = async () => {
+            try {
                 const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}`);
                 const data = await response.json();
-                setTitle(data.title);
-                setYear(data.year);
-                setArtist(data.artist);
-            }catch (error){
+                setTitle(data.title || "");
+                setYear(data.year || "");
+                setArtist(data.artist || "");
+            } catch (error) {
                 console.error('Error fetching album:', error);
                 setError('Error al cargar el álbum');
             }
         };
+
+        const fetchAllArtists = async () => {
+            const baseURL = 'https://sandbox.academiadevelopers.com/harmonyhub/artists/';
+            let artistsData = [];
+            let nextURL = baseURL;
+
+            try {
+                while (nextURL) {
+                    const response = await fetch(nextURL);
+                    if (!response.ok) {
+                        throw new Error(`Error en la respuesta de la petición: ${response.statusText}`);
+                    }
+                    const data = await response.json();
+                    artistsData = [...artistsData, ...data.results];
+                    nextURL = data.next; 
+                }
+                setArtists(artistsData);
+            } catch (error) {
+                console.error('Error fetching artists:', error);
+                setError('Error al cargar los artistas');
+            }
+        };
+
         fetchAlbum();
+        fetchAllArtists();
     }, [id]);
 
     const handleImageChange = (e) => {
@@ -37,7 +62,7 @@ const EditarAlbum=()=>{
         setLoading(true);
         setError(null);
 
-        const token= localStorage.getItem("authToken");
+        const token = localStorage.getItem("authToken");
 
         const formData = new FormData();
         formData.append("title", title);
@@ -72,7 +97,7 @@ const EditarAlbum=()=>{
     return (
         <div className="container">
             <div className="form-container">
-                <h1>Editar Album</h1>
+                <h1>Editar Álbum</h1>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Nombre del álbum:
@@ -100,15 +125,19 @@ const EditarAlbum=()=>{
                     <br />
                     <label>
                         Artista:
-                        <input 
-                            type="text"
+                        <select 
                             name="artista"
                             value={artist}
                             onChange={(e) => setArtist(e.target.value)}
                             required
-                            placeholder="Ingrese el ID del artista"
-                        />
+                        >
+                            <option value="">Seleccione un artista</option>
+                            {artists.map(artist => (
+                                <option key={artist.id} value={artist.id}>{artist.name || 'No especificado'}</option>
+                            ))}
+                        </select>
                     </label>
+                    <br />
                     <label>
                         Imagen:
                         <input
@@ -126,7 +155,7 @@ const EditarAlbum=()=>{
                 </form>
             </div>
         </div>
-    )
+    );
 };
 
 export default EditarAlbum;

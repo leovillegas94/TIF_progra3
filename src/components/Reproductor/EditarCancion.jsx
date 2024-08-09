@@ -3,7 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './AgregarCancion.css';
 
 const EditarCancion = () => {
-    const { id } = useParams(); // Obtén el ID de la canción de los parámetros de la URL
+    const { id } = useParams(); 
     const navigate = useNavigate();
     const [titulo, setTitulo] = useState('');
     const [anio, setAnio] = useState('');

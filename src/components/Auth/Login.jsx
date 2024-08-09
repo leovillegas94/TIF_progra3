@@ -33,7 +33,6 @@ const Login = () => {
                 }
 
                 const data = await response.json();
-                console.log('Respuesta del servidor:', data); // Verifica la respuesta aquí
                 const { token } = data;
 
                 if (token) {
