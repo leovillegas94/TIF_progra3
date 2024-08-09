@@ -3,67 +3,73 @@ import { useParams, useNavigate } from 'react-router-dom';
 import './AgregarCancion.css';
 
 const EditarCancion = () => {
-    const { id } = useParams();
+    const { id } = useParams(); // Obtén el ID de la canción de los parámetros de la URL
     const navigate = useNavigate();
     const [titulo, setTitulo] = useState('');
     const [anio, setAnio] = useState('');
-    const [duracion, setDuracion] = useState('');
     const [archivoCancion, setArchivoCancion] = useState(null);
     const [portada, setPortada] = useState(null);
     const [album, setAlbum] = useState('');
     const [artista, setArtista] = useState('');
-    const [genero, setGenero] = useState('');
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const [albumes, setAlbumes] = useState([]);
     const [artistas, setArtistas] = useState([]);
-    const [generos, setGeneros] = useState([]);
 
     useEffect(() => {
         const fetchData = async () => {
-            try {
-                const token = localStorage.getItem('authToken');
+            const baseURL = 'https://sandbox.academiadevelopers.com/harmonyhub/';
+            const token = localStorage.getItem('authToken');
 
-                const [cancionResponse, albumesResponse, artistasResponse, generosResponse] = await Promise.all([
+            const fetchAllPages = async (url, includeToken = false) => {
+                let data = [];
+                let next = url;
+
+                while (next) {
+                    try {
+                        const response = await fetch(next, {
+                            headers: includeToken ? { Authorization: `Token ${token}` } : {},
+                        });
+
+                        if (!response.ok) {
+                            const errorText = await response.text();
+                            throw new Error(`Error en la respuesta de la petición: ${errorText}`);
+                        }
+
+                        const json = await response.json();
+                        data = data.concat(json.results);
+                        next = json.next; 
+                    } catch (error) {
+                        console.error(`Error fetching data from ${next}:`, error);
+                        setError(`Error al cargar datos de ${url}`);
+                        return [];
+                    }
+                }
+
+                return data;
+            };
+
+            try {
+                const [cancionResponse, albumesData, artistasData] = await Promise.all([
                     fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`, {
                         headers: {
                             Authorization: `Token ${token}`,
                         }
                     }),
-                    fetch('https://sandbox.academiadevelopers.com/harmonyhub/albums/', {
-                        headers: {
-                            Authorization: `Token ${token}`,
-                        }
-                    }),
-                    fetch('https://sandbox.academiadevelopers.com/harmonyhub/artists/', {
-                        headers: {
-                            Authorization: `Token ${token}`,
-                        }
-                    }),
-                    fetch('https://sandbox.academiadevelopers.com/harmonyhub/genres/', {
-                        headers: {
-                            Authorization: `Token ${token}`,
-                        }
-                    })
+                    fetchAllPages(`${baseURL}albums/`),
+                    fetchAllPages(`${baseURL}artists/`)
                 ]);
 
                 const cancionData = await cancionResponse.json();
-                const albumesData = await albumesResponse.json();
-                const artistasData = await artistasResponse.json();
-                const generosData = await generosResponse.json();
-
                 setTitulo(cancionData.title || '');
                 setAnio(cancionData.year || '');
-                setDuracion(cancionData.duration || '');
                 setAlbum(cancionData.album || '');
                 setArtista(cancionData.artists?.[0] || '');
-                setGenero(cancionData.genres?.[0] || '');
-                setAlbumes(albumesData.results);
-                setArtistas(artistasData.results);
-                setGeneros(generosData.results);
+                setAlbumes(albumesData);
+                setArtistas(artistasData);
             } catch (error) {
                 console.error("Error fetching data: ", error);
-                setError("Error al cargar datos de la canción, álbumes, artistas o géneros.");
+                setError("Error al cargar datos de la canción, álbumes o artistas.");
             }
         };
 
@@ -88,10 +94,8 @@ const EditarCancion = () => {
         const formData = new FormData();
         formData.append('title', titulo);
         formData.append('year', anio);
-        formData.append('duration', duracion);
         formData.append('album', album);
         formData.append('artists', artista);
-        formData.append('genres', genero);
         if (archivoCancion) {
             formData.append('song_file', archivoCancion);
         }
@@ -154,17 +158,6 @@ const EditarCancion = () => {
                     </label>
                     <br />
                     <label>
-                        Duración:
-                        <input
-                            type="text"
-                            name="duracion"
-                            value={duracion}
-                            onChange={(e) => setDuracion(e.target.value)}
-                            placeholder='Inserte la duración de la canción (en segundos)'
-                        />
-                    </label>
-                    <br />
-                    <label>
                         Álbum:
                         <select
                             name="album"
@@ -189,22 +182,7 @@ const EditarCancion = () => {
                         >
                             <option value="">Seleccione un artista</option>
                             {artistas.map(artista => (
-                                <option key={artista.id} value={artista.id}>{artista.name}</option>
-                            ))}
-                        </select>
-                    </label>
-                    <br />
-                    <label>
-                        Género:
-                        <select
-                            name="genero"
-                            value={genero}
-                            onChange={(e) => setGenero(e.target.value)}
-                            required
-                        >
-                            <option value="">Seleccione un género</option>
-                            {generos.map(genero => (
-                                <option key={genero.id} value={genero.id}>{genero.name}</option>
+                                <option key={artista.id} value={artista.id}>{artista.name || 'No especificado'}</option>
                             ))}
                         </select>
                     </label>

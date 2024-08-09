@@ -9,12 +9,10 @@ const AgregarCancion = () => {
     const [portada, setPortada] = useState(null);
     const [album, setAlbum] = useState('');
     const [artista, setArtista] = useState('');
-    const [genero, setGenero] = useState('');
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const [albumes, setAlbumes] = useState([]);
     const [artistas, setArtistas] = useState([]);
-    const [generos, setGeneros] = useState([]);
     const navigate = useNavigate();
 
     useEffect(() => {
@@ -22,7 +20,6 @@ const AgregarCancion = () => {
             const baseURL = 'https://sandbox.academiadevelopers.com/harmonyhub/';
             const token = localStorage.getItem('authToken');
 
-            // Función para obtener todos los datos paginados
             const fetchAllPages = async (url, includeToken = false) => {
                 let data = [];
                 let next = url;
@@ -40,7 +37,7 @@ const AgregarCancion = () => {
 
                         const json = await response.json();
                         data = data.concat(json.results);
-                        next = json.next; // URL de la siguiente página
+                        next = json.next; 
                     } catch (error) {
                         console.error(`Error fetching data from ${next}:`, error);
                         setError(`Error al cargar datos de ${url}`);
@@ -51,20 +48,17 @@ const AgregarCancion = () => {
                 return data;
             };
 
-            // Obtener datos de álbumes, artistas y géneros
             try {
-                const [albumesData, artistasData, generosData] = await Promise.all([
+                const [albumesData, artistasData] = await Promise.all([
                     fetchAllPages(`${baseURL}albums/`),
-                    fetchAllPages(`${baseURL}artists/`),
-                    fetchAllPages(`${baseURL}genres/`)
+                    fetchAllPages(`${baseURL}artists/`)
                 ]);
 
                 setAlbumes(albumesData);
                 setArtistas(artistasData);
-                setGeneros(generosData);
             } catch (error) {
                 console.error("Error fetching data: ", error);
-                setError("Error al cargar datos de álbumes, artistas o géneros.");
+                setError("Error al cargar datos de álbumes, artistas.");
             }
         };
 
@@ -91,7 +85,6 @@ const AgregarCancion = () => {
         formData.append('year', anio);
         formData.append('album', album);
         formData.append('artists', artista);
-        formData.append('genres', genero);
         if (archivoCancion) {
             formData.append('song_file', archivoCancion);
         }
@@ -186,21 +179,7 @@ const AgregarCancion = () => {
                     </div>
 
                     <div className="columna">
-                        <label>
-                            Género:
-                            <select
-                                name="genero"
-                                value={genero}
-                                onChange={(e) => setGenero(e.target.value)}
-                                required
-                            >
-                                <option value="">Seleccione un género</option>
-                                {generos.map(genero => (
-                                    <option key={genero.id} value={genero.id}>{genero.name}</option>
-                                ))}
-                            </select>
-                        </label>
-
+                        
                         <label>
                             Archivo de la Canción:
                             <input
