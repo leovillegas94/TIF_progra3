@@ -1,0 +1,132 @@
+.lista-albumes {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    padding: 16px;
+    background-color: black;
+}
+
+.top-bar {
+    display: flex;
+    justify-content: space-between;
+    width: 100%;
+    max-width: 800px;
+    margin-bottom: 16px;
+}
+
+.agregar-album {
+    flex: 1;
+}
+
+.add-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 8px;
+    padding: 10px 20px;
+    cursor: pointer;
+}
+
+.add-button:hover {
+    background-color: #2980b9;
+}
+
+.search-container {
+    display: flex;
+    align-items: center;
+    flex: 2;
+}
+
+.search-input {
+    border: 1px solid #ddd;
+    border-radius: 4px;
+    padding: 8px;
+    flex: 1;
+    width: 200px;
+}
+
+.search-button {
+    background-color: #3498db;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    margin-left: 8px;
+    cursor: pointer;
+}
+
+.search-button:hover {
+    background-color: #2980b9;
+}
+
+.albums-list {
+    display: grid;
+    grid-template-columns: repeat(3, 1fr);
+    gap: 16px;
+    width: 100%;
+    max-width: 1200px;
+}
+
+.album-card {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+}
+
+.pagination {
+    display: flex;
+    align-items: center;
+    margin-top: 16px;
+}
+
+.pagination-button {
+    background-color: #76ff7a;
+    color: #fff;
+    border: none;
+    border-radius: 4px;
+    padding: 8px;
+    cursor: pointer;
+    margin: 0 4px;
+}
+
+.pagination-button:disabled {
+    background-color: #95a5a6;
+    cursor: not-allowed;
+}
+
+.pagination-number {
+    margin: 0 8px;
+}
+
+.no-encontrada {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    height: 100%;
+    background-color: black; 
+    color: #fff;
+    text-align: center;
+}
+
+.no-encontrada-img {
+    max-width: 450px;
+    margin-bottom: 20px;
+    border-radius: 50px;
+    box-shadow: 4px 4px 8px white;
+}
+
+.no-encontrada-message {
+    font-size: 1.5rem;
+    margin-bottom: 20px;
+}
+
+.no-encontrada .pagination-button {
+    padding: 10px 20px;
+    font-size: 1rem;
+    color: black;
+    background-color: #76ff7a;
+    border: none;
+    border-radius: 5px;
+    cursor: pointer;
+    transition: background-color 0.3s ease;
+}
