@@ -35,13 +35,14 @@ export default function Cancion({ song, onDelete }) {
       navigate(`/canciones/editar/${id}`);
   };
 
+    console.log(song);
     return (
         <div className="track">
             <div className="track-id">{song.id}</div>
             <div className="track-info">
                 <div className="track-details">
                     <h3>{song.title}</h3>
-                    <h4>{song.artist} - {song.album}</h4>
+                    <h4>{song.artistName || 'Desconocido'} - {song.albumTitle || 'Desconocido'}</h4>
                     <div className="content">
                         <audio controls>
                             <source src={song.song_file} type="audio/mpeg" />
