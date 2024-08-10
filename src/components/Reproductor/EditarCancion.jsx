@@ -211,6 +211,9 @@ const EditarCancion = () => {
                         {cargando ? 'Actualizando...' : 'Actualizar'}
                     </button>
                     {error && <p className='add-song-error'>{error}</p>}
+                    <button className="add-song-button" onClick={() => navigate('/canciones')}>
+                    Volver a canciones
+                    </button>
                 </form>
             </div>
         </div>
