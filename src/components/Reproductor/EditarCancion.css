@@ -46,22 +46,29 @@ input, textarea {
     border: 1px solid #555;
 }
 
-.add-artist-button {
+.edit-song-button {
     background-color: #76ff7a;
     color: black;
     height: 50px;
+    width: 100%;
     color: #fff;
     border: none;
     cursor: pointer;
-    margin-top: 10px; 
+    margin-top: 10px;
+    border-radius: 50px;
 }
 
-.add-artist-button:disabled {
+.edit-song-button:hover {
+    background-color: black;
+    color: white; 
+}
+
+.edit-song-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-.add-artist-error {
+.edit-song-error {
     color: #f00; 
     margin-top: 10px; 
 }

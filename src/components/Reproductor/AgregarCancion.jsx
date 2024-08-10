@@ -176,7 +176,7 @@ const AgregarCancion = () => {
     return (
         <div className="container">
             <div className="form-container">
-                <h1>Agregar Canción</h1>
+                <h1 style={{ color: 'white'}}>Agregar Canción</h1>
                 <form onSubmit={handleSubmit} className="formulario">
                     <div className="columna">
                         <label>

@@ -63,6 +63,7 @@ input, select {
 .add-song-button {
     background-color: #76ff7a;
     color: black;
+    border: 2px solid black;
     height: 50px;
     width: 100%;
     color: #fff;
@@ -72,6 +73,10 @@ input, select {
     border-radius: 50px;
 }
 
+.add-song-button:hover {
+    background-color: black;
+    color: white; 
+}
 .add-song-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
