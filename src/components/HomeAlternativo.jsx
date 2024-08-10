@@ -6,7 +6,7 @@ const HomeAlternativo = () => {
     const [canciones, setCanciones] = useState([]);
 
     const fetchCanciones = async () => {
-        const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs');
+        const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs/?page=1&page_size=800');
         const data = await response.json();
 
         const cancionesAleat = [];

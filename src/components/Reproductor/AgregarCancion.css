@@ -27,6 +27,9 @@ html, body {
     width: 100%;
     max-width: 800px; 
 }
+.form-container h1{
+    color: white;
+}
 
 form {
     display: flex;
