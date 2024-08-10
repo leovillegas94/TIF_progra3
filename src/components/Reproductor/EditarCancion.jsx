@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import './AgregarCancion.css';
+import './EditarCancion.css';
 
 const EditarCancion = () => {
     const { id } = useParams(); 
@@ -132,7 +132,7 @@ const EditarCancion = () => {
     return (
         <div className="container">
             <div className="form-container">
-                <h1>Editar Canción</h1>
+                <h1 style={{ color: 'white'}}>Editar Canción</h1>
                 <form onSubmit={handleSubmit}>
                     <label>
                         Título de la Canción:
@@ -207,10 +207,13 @@ const EditarCancion = () => {
                         />
                     </label>
                     <br />
-                    <button type="submit" disabled={cargando} className="add-song-button">
+                    <button type="submit" disabled={cargando} className="edit-song-button">
                         {cargando ? 'Actualizando...' : 'Actualizar'}
                     </button>
-                    {error && <p className='add-song-error'>{error}</p>}
+                    {error && <p className='edit-song-error'>{error}</p>}
+                    <button className="edit-song-button" onClick={() => navigate('/canciones')}>
+                    Volver a canciones
+                    </button>
                 </form>
             </div>
         </div>

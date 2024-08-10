@@ -14,7 +14,7 @@ const ListaCanciones = () => {
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
     const [searchQuery, setSearchQuery] = useState('');
-    const [searchResult, setSearchResult] = useState(null);
+    const [searchResults, setSearchResults] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
     const navigate = useNavigate();
 
@@ -63,42 +63,38 @@ const ListaCanciones = () => {
             setCurrentPage(newPage);
         }
     };
+    
+    const handleSearchQueryChange = async (e) => {
+        const query = e.target.value;
+        setSearchQuery(query);
 
-    const handleSearch = async () => {
-        if (!searchQuery.trim()) {
-            setSearchResult(null);
-            return;
-        }
-        try {
-            const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${searchQuery}/`);
-            if (response.ok) {
-                const data = await response.json();
-                setSearchResult(data);
-                setErrorMessage('');
-            } else if (response.status === 404) {
-                setSearchResult(null);
-                setErrorMessage('No tenemos lo que buscas.');
-            } else {
-                throw new Error('Error en la búsqueda');
+        if (query.trim()) {
+            try {
+                const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs?title=${encodeURIComponent(query)}`);
+                if (response.ok) {
+                    const data = await response.json();
+                    setSearchResults(data.results);
+                    setErrorMessage('');
+                } else if (response.status === 404) {
+                    setSearchResults([]);
+                    setErrorMessage('No tenemos lo que buscas.');
+                } else {
+                    throw new Error('Error en la búsqueda');
+                }
+            } catch (error) {
+                console.error("Error en la búsqueda: ", error);
+                setSearchResults([]);
+                setErrorMessage('Error al buscar la canción.');
             }
-        } catch (error) {
-            console.error("Error en la búsqueda: ", error);
-            setSearchResult(null);
-            setErrorMessage('Error al buscar la canción.');
-        }
-    };
-
-    const handleSearchQueryChange = (e) => {
-        setSearchQuery(e.target.value);
-        if (!e.target.value.trim()) {
-            setSearchResult(null);
+        } else {
+            setSearchResults([]);
             setErrorMessage('');
         }
     };
 
     const handleClearSearch = () => {
         setSearchQuery('');
-        setSearchResult(null);
+        setSearchResults([]);
         setErrorMessage('');
         setCurrentPage(1);
         fetchCanciones();
@@ -111,12 +107,13 @@ const ListaCanciones = () => {
     const handleDeleteSongFromList = useCallback((id) => {
         setCanciones(prevCanciones => prevCanciones.filter(cancion => cancion.id !== id));
         setSearchQuery('');
-        setSearchResult(null);
+        setSearchResults([]);
+        setErrorMessage('');
         setCurrentPage(1);
         fetchCanciones();
     }, [fetchCanciones]);
 
-    const cancionesToShow = searchResult ? [searchResult] : canciones;
+    const cancionesToShow = searchResults.length > 0 ? searchResults : canciones;
 
     return (
         <div className="lista-canciones">
@@ -131,15 +128,15 @@ const ListaCanciones = () => {
                         type='text'
                         value={searchQuery}
                         onChange={handleSearchQueryChange}
-                        placeholder='Inserte el ID para buscar una canción'
+                        placeholder='Inserte el título para buscar una canción'
                         className='search-input'
                     />
-                    <button type='submit' className="search-button" onClick={handleSearch}>
+                    <button type='submit' className="search-button" onClick={handleSearchQueryChange}>
                         <FaSearch />
                     </button>
                 </div>
             </div>
-            {errorMessage || searchResult ? (
+            {errorMessage || searchResults.length > 0 ? (
                 <div className="no-encontrada">
                     {errorMessage ? (
                         <>
@@ -147,15 +144,17 @@ const ListaCanciones = () => {
                             <div className="no-encontrada-message">{errorMessage}</div>
                         </>
                     ) : (
-                        <Cancion
-                            key={searchResult.id}
-                            song={{ 
-                                ...searchResult, 
-                                artistName: artists[searchResult.artist] || 'Desconocido', 
-                                albumTitle: albums[searchResult.album] || 'Desconocido' 
-                            }}
-                            onDelete={handleDeleteSongFromList}
-                        />
+                        cancionesToShow.map(cancion => (
+                            <Cancion
+                                key={cancion.id}
+                                song={{ 
+                                    ...cancion, 
+                                    artistName: artists[cancion.artist] || 'Desconocido', 
+                                    albumTitle: albums[cancion.album] || 'Desconocido' 
+                                }}
+                                onDelete={handleDeleteSongFromList}
+                            />
+                        ))
                     )}
                     <button className="pagination-button" onClick={handleClearSearch}>
                         Volver a canciones

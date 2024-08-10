@@ -100,7 +100,6 @@ const AgregarCancion = () => {
         }
 
         try {
-            // Crear la canción
             const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs/', {
                 method: 'POST',
                 headers: {
@@ -117,12 +116,10 @@ const AgregarCancion = () => {
             const nuevaCancion = await response.json();
             console.log('Canción creada:', nuevaCancion);
 
-            // Asociar artistas a la canción
             for (let artistId of artistasSeleccionados) {
                 await associateArtistToSong(nuevaCancion.id, artistId, 'Artista');
             }
 
-            // Obtener la canción actualizada para verificar la asociación de artistas
             const updatedSongResponse = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${nuevaCancion.id}/`, {
                 headers: {
                     Authorization: `Token ${token}`,
@@ -179,7 +176,7 @@ const AgregarCancion = () => {
     return (
         <div className="container">
             <div className="form-container">
-                <h1>Agregar Canción</h1>
+                <h1 style={{ color: 'white'}}>Agregar Canción</h1>
                 <form onSubmit={handleSubmit} className="formulario">
                     <div className="columna">
                         <label>
@@ -262,6 +259,9 @@ const AgregarCancion = () => {
                         {error && <p className='add-song-error'>{error}</p>}
                     </div>
                 </form>
+                <button className="add-song-button" onClick={() => navigate('/canciones')}>
+                    Volver a canciones
+                </button>
             </div>
         </div>
     );

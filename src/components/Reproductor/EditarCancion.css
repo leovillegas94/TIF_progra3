@@ -46,22 +46,33 @@ input, textarea {
     border: 1px solid #555;
 }
 
-.add-artist-button {
+.edit-song-button {
     background-color: #76ff7a;
     color: black;
+    border: 2px solid black;
     height: 50px;
+    width: 100%;
     color: #fff;
     border: none;
     cursor: pointer;
-    margin-top: 10px; 
+    margin-top: 20px;
+    border-radius: 50px;
 }
 
-.add-artist-button:disabled {
+.edit-song-button:hover {
+    color: #fff;
+    transform: translateY(-10px);
+    font-weight: 700;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(118, 255, 122, 0.7);
+}
+
+.edit-song-button:disabled {
     background-color: #ccc;
     cursor: not-allowed;
 }
 
-.add-artist-error {
+.edit-song-error {
     color: #f00; 
     margin-top: 10px; 
 }
