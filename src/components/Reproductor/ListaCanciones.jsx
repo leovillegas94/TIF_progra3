@@ -58,6 +58,12 @@ const ListaCanciones = () => {
         fetchCanciones();
     }, [fetchCanciones]);
 
+    const handlePageChange = (newPage) => {
+        if (newPage >= 1 && newPage <= totalPages) {
+            setCurrentPage(newPage);
+        }
+    };
+    
     const handleSearchQueryChange = async (e) => {
         const query = e.target.value;
         setSearchQuery(query);

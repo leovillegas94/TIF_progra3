@@ -58,7 +58,7 @@ export default function Cancion({ song, onDelete }) {
             <div className="track-info">
                 <div className="track-details">
                     <h3>{song.title}</h3>
-                    <h4>Artista: {artistDetails?.name || 'Desconocido'} - Album: {albumDetails?.title || 'Desconocido'}</h4>
+                    <h4>{artistDetails?.name || 'Desconocido'} - {albumDetails?.title || 'Desconocido'}</h4>
                     <div className="content">
                         <audio controls>
                             <source src={song.song_file} type="audio/mpeg" />
