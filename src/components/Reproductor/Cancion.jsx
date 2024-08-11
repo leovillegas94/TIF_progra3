@@ -9,6 +9,7 @@ export default function Cancion({ song, onDelete }) {
     const [artistDetails, setArtistDetails] = useState(null);  // Estado para almacenar los detalles del artista
     const navigate = useNavigate();  // Hook para navegación programática
     const { state } = useAuth();
+    const { isAuthenticated } = state;
 
     // Fetch detalles del álbum si el song tiene un album asignado
     useEffect(() => {
@@ -27,8 +28,7 @@ export default function Cancion({ song, onDelete }) {
         }
     }, [song]);  // Dependencia en 'song', se ejecutará cada vez que cambie el objeto song
 
-    const handleDeleteSongFromAPI = async (id) => {
-        const { isAuthenticated } = state;
+    const handleDeleteSongFromAPI = async (id) => { // Función para manejar la elimacion de la canción
         if (!isAuthenticated) {
             navigate("login");
         }else if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
