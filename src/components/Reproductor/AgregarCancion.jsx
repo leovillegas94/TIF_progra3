@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import './AgregarCancion.css';
+import { useAuth } from "../Contexts/AuthContext";
 
 const AgregarCancion = () => {
     const [titulo, setTitulo] = useState('');
@@ -12,58 +13,81 @@ const AgregarCancion = () => {
     const [cargando, setCargando] = useState(false);
     const [error, setError] = useState(null);
     const [albumes, setAlbumes] = useState([]);
-    const [artistas, setArtistas] = useState([]);
+    const [artists, setArtists] = useState([]);
     const navigate = useNavigate();
+    const { state } = useAuth();
+    const token = state?.token;
 
     useEffect(() => {
-        const fetchData = async () => {
-            const baseURL = 'https://sandbox.academiadevelopers.com/harmonyhub/';
-            const token = localStorage.getItem('authToken');
+        const fetchArtists = async () => {
+            let allArtists = [];
+            let page = 1;
+            let hasNextPage = true;
 
-            const fetchAllPages = async (url, includeToken = false) => {
-                let data = [];
-                let next = url;
-
-                while (next) {
-                    try {
-                        const response = await fetch(next, {
-                            headers: includeToken ? { Authorization: `Token ${token}` } : {},
-                        });
-
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            throw new Error(`Error en la respuesta de la petición: ${errorText}`);
+            try {
+                while (hasNextPage) {
+                    const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/?page=${page}`, {
+                        headers: {
+                            Authorization: `Token ${token}`,
                         }
+                    });
+                    if (!response.ok) {
+                        throw new Error("Error al obtener la lista de artistas");
+                    }
 
-                        const json = await response.json();
-                        data = data.concat(json.results);
-                        next = json.next; 
-                    } catch (error) {
-                        console.error(`Error fetching data from ${next}:`, error);
-                        setError(`Error al cargar datos de ${url}`);
-                        return [];
+                    const data = await response.json();
+                    allArtists = allArtists.concat(data.results);
+
+                    if (data.next) {
+                        page++;
+                    } else {
+                        hasNextPage = false;
                     }
                 }
 
-                return data;
-            };
-
-            try {
-                const [albumesData, artistasData] = await Promise.all([
-                    fetchAllPages(`${baseURL}albums/`),
-                    fetchAllPages(`${baseURL}artists/`)
-                ]);
-
-                setAlbumes(albumesData);
-                setArtistas(artistasData);
+                setArtists(allArtists);
             } catch (error) {
-                console.error("Error fetching data: ", error);
-                setError("Error al cargar datos de álbumes, artistas.");
+                console.error("Error al cargar los artistas:", error);
+                setError("Error al cargar los artistas");
             }
         };
 
-        fetchData();
-    }, []);
+        const fetchAlbumes = async () => {
+            let allAlbumes = [];
+            let page = 1;
+            let hasNextPage = true;
+
+            try {
+                while (hasNextPage) {
+                    const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/?page=${page}`, {
+                        headers: {
+                            Authorization: `Token ${token}`,
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error("Error al obtener la lista de albumes");
+                    }
+
+                    const data = await response.json();
+                    allAlbumes = allAlbumes.concat(data.results);
+
+                    if (data.next) {
+                        page++;
+                    } else {
+                        hasNextPage = false;
+                    }
+                }
+
+                setAlbumes(allAlbumes);
+            } catch (error) {
+                console.error("Error al cargar los albumes:", error);
+                setError("Error al cargar los albumes");
+            }
+        };
+
+        fetchArtists();
+        fetchAlbumes();
+    }, [token]);
 
     const handleArchivoCancionChange = (e) => {
         setArchivoCancion(e.target.files[0]);
@@ -226,8 +250,8 @@ const AgregarCancion = () => {
                                 onChange={handleArtistaChange}
                                 required
                             >
-                                {artistas.map(artista => (
-                                    <option key={artista.id} value={artista.id}>{artista.name}</option>
+                                {artists.map(artist => (
+                                    <option key={artist.id} value={artist.id}>{artist.name}</option>
                                 ))}
                             </select>
                         </label>
