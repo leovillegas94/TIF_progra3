@@ -30,7 +30,7 @@ export default function Cancion({ song, onDelete }) {
 
     const handleDeleteSongFromAPI = async (id) => { // Función para manejar la elimacion de la canción
         if (!isAuthenticated) {
-            navigate("login");
+            navigate("/canciones/login");
         }else if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
             const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
             const token = localStorage.getItem('authToken');  // Obtén el token de autenticación del localStorage

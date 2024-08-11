@@ -70,6 +70,10 @@ const router = createBrowserRouter([
                 element: <Login />
             },
             {
+                path: "/canciones/login",
+                element: <Login />
+            },
+            {
                 path: "albums",
                 element: <Albums />
             },
