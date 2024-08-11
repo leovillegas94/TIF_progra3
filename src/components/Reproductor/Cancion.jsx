@@ -2,11 +2,13 @@ import React, { useEffect, useState } from "react";
 import { FaEdit, FaTrash } from 'react-icons/fa';
 import './Cancion.css';
 import { useNavigate } from 'react-router-dom';
+import { useAuth } from '../Contexts/AuthContext';
 
 export default function Cancion({ song, onDelete }) {
     const [albumDetails, setAlbumDetails] = useState(null);  // Estado para almacenar los detalles del álbum
     const [artistDetails, setArtistDetails] = useState(null);  // Estado para almacenar los detalles del artista
     const navigate = useNavigate();  // Hook para navegación programática
+    const { state } = useAuth();
 
     // Fetch detalles del álbum si el song tiene un album asignado
     useEffect(() => {
@@ -26,7 +28,10 @@ export default function Cancion({ song, onDelete }) {
     }, [song]);  // Dependencia en 'song', se ejecutará cada vez que cambie el objeto song
 
     const handleDeleteSongFromAPI = async (id) => {
-        if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
+        const { isAuthenticated } = state;
+        if (!isAuthenticated) {
+            navigate("login");
+        }else if (window.confirm("¿Estás seguro de que deseas eliminar esta canción?")) {
             const URL = `https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`;
             const token = localStorage.getItem('authToken');  // Obtén el token de autenticación del localStorage
             try {
@@ -43,8 +48,8 @@ export default function Cancion({ song, onDelete }) {
                     throw new Error('Error al eliminar la canción');
                 }
             } catch (error) {
-                console.error('Error al eliminar la canción:', error.message);
-                alert('Error al eliminar la canción: ' + error.message);
+                console.error('Error al eliminar la canción:', error);
+                alert('Error al eliminar la canción: Sólo puedes eliminar canciones creadas por ti' );
             }
         }
     };
