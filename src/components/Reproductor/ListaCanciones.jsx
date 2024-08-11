@@ -5,9 +5,9 @@ import elementoNoEncontrado from '../../assets/elemento_no_encontrado.jpg';
 import './ListaCanciones.css';
 import { useNavigate } from 'react-router-dom';
 
-const ITEMS_PER_PAGE = 3;
+const ITEMS_PER_PAGE = 3;  //Número de canciones a mostrar por página
 
-const ListaCanciones = () => {
+const ListaCanciones = () => {   // Estados para manejar canciones, álbumes, artistas, paginación, búsqueda, errores y navegación
     const [canciones, setCanciones] = useState([]);
     const [albums, setAlbums] = useState({});
     const [artists, setArtists] = useState({});
@@ -16,16 +16,16 @@ const ListaCanciones = () => {
     const [searchQuery, setSearchQuery] = useState('');
     const [searchResults, setSearchResults] = useState([]);
     const [errorMessage, setErrorMessage] = useState('');
-    const navigate = useNavigate();
+    const navigate = useNavigate();  // Hook para la navegación
 
-    const fetchCanciones = useCallback(async () => {
-        try {
+    const fetchCanciones = useCallback(async () => {  // Función para obtener canciones, álbumes y artistas desde la API
+        try {   // Fetch de canciones con paginación
             const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs?page=${currentPage}&page_size=${ITEMS_PER_PAGE}`);
-            const data = await response.json();
-            setCanciones(data.results);
-            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));
+            const data = await response.json();  
+            setCanciones(data.results);  // Actualiza el estado con las canciones obtenidas
+            setTotalPages(Math.ceil(data.count / ITEMS_PER_PAGE));  // Calcula el número total de páginas
 
-            const artistIds = [...new Set(data.results.map(song => song.artist))].filter(id => id);
+            const artistIds = [...new Set(data.results.map(song => song.artist))].filter(id => id);  // Fetch de artistas únicos
             const artistResponses = await Promise.all(
                 artistIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`))
             );
@@ -34,9 +34,9 @@ const ListaCanciones = () => {
                 acc[artist.id] = artist.name;
                 return acc;
             }, {});
-            setArtists(artistMap);
+            setArtists(artistMap);   //Actualiza el estado con los artistas obtenidos
 
-            const albumIds = [...new Set(data.results.map(song => song.album))].filter(id => id);
+            const albumIds = [...new Set(data.results.map(song => song.album))].filter(id => id);  // Fetch de álbumes únicos
             const albumResponses = await Promise.all(
                 albumIds.map(id => fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/${id}`))
             );
@@ -45,75 +45,75 @@ const ListaCanciones = () => {
                 acc[album.id] = album.title;
                 return acc;
             }, {});
-            setAlbums(albumMap);
+            setAlbums(albumMap);  // Actualiza el estado con los álbumes obtenidos
 
-            setErrorMessage('');
+            setErrorMessage('');  // Actualiza el estado con los álbumes obtenidos
         } catch (error) {
             console.error("Error fetching songs or artists: ", error);
-            setErrorMessage('Error al cargar canciones.');
+            setErrorMessage('Error al cargar canciones.');  // Establece un mensaje de error en caso de excepción
         }
-    }, [currentPage]);
+    }, [currentPage]);  // Dependencia en `currentPage` para actualizar los datos cuando cambie la página
 
     useEffect(() => {
-        fetchCanciones();
-    }, [fetchCanciones]);
+        fetchCanciones();  // Llama a la función para obtener datos cuando el componente se monta o cambia la página
+    }, [fetchCanciones]);  
 
-    const handlePageChange = (newPage) => {
+    const handlePageChange = (newPage) => {  //Maneja el cambio de página
         if (newPage >= 1 && newPage <= totalPages) {
-            setCurrentPage(newPage);
+            setCurrentPage(newPage);  //Actualiza la página actual si está dentro del rango válido
         }
     };
     
-    const handleSearchQueryChange = async (e) => {
+    const handleSearchQueryChange = async (e) => {  // Maneja el cambio en el campo de búsqueda
         const query = e.target.value;
-        setSearchQuery(query);
+        setSearchQuery(query);  // Actualiza la consulta de búsqueda
 
         if (query.trim()) {
             try {
                 const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs?title=${encodeURIComponent(query)}`);
                 if (response.ok) {
                     const data = await response.json();
-                    setSearchResults(data.results);
-                    setErrorMessage('');
+                    setSearchResults(data.results);  // Actualiza los resultados de búsqueda
+                    setErrorMessage('');  // Limpia el mensaje de error si la búsqueda es exitosa
                 } else if (response.status === 404) {
                     setSearchResults([]);
-                    setErrorMessage('No tenemos lo que buscas.');
+                    setErrorMessage('No tenemos lo que buscas.');  // Mensaje de error si no se encuentran resultados
                 } else {
                     throw new Error('Error en la búsqueda');
                 }
             } catch (error) {
                 console.error("Error en la búsqueda: ", error);
                 setSearchResults([]);
-                setErrorMessage('Error al buscar la canción.');
+                setErrorMessage('Error al buscar la canción.'); // Establece un mensaje de error en caso de excepción
             }
         } else {
             setSearchResults([]);
-            setErrorMessage('');
+            setErrorMessage('');   // Limpia los resultados y el mensaje de error si la búsqueda está vacía
         }
     };
 
-    const handleClearSearch = () => {
+    const handleClearSearch = () => {   // Limpia la búsqueda y vuelve a la lista completa de canciones
         setSearchQuery('');
         setSearchResults([]);
         setErrorMessage('');
         setCurrentPage(1);
-        fetchCanciones();
+        fetchCanciones();   // Vuelve a cargar la lista completa de canciones
     };
 
-    const handleAddSong = () => {
+    const handleAddSong = () => {   // Navega a la página para agregar una nueva canción
         navigate('/canciones/agregar');
     };
 
-    const handleDeleteSongFromList = useCallback((id) => {
+    const handleDeleteSongFromList = useCallback((id) => {   // Maneja la eliminación de una canción de la lista
         setCanciones(prevCanciones => prevCanciones.filter(cancion => cancion.id !== id));
         setSearchQuery('');
         setSearchResults([]);
         setErrorMessage('');
         setCurrentPage(1);
-        fetchCanciones();
+        fetchCanciones();   // Vuelve a cargar la lista completa de canciones
     }, [fetchCanciones]);
 
-    const cancionesToShow = searchResults.length > 0 ? searchResults : canciones;
+    const cancionesToShow = searchResults.length > 0 ? searchResults : canciones;     // Determina qué canciones mostrar en función de la búsqueda
 
     return (
         <div className="lista-canciones">
