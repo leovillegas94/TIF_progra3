@@ -98,7 +98,7 @@ const AgregarCancion = () => {
         if (portada) {
             formData.append('cover', portada);
         }
-
+    
         try {
             const response = await fetch('https://sandbox.academiadevelopers.com/harmonyhub/songs/', {
                 method: 'POST',
@@ -107,15 +107,15 @@ const AgregarCancion = () => {
                 },
                 body: formData,
             });
-
+    
             if (!response.ok) {
                 const errorText = await response.text();
                 throw new Error(errorText);
             }
-
+    
             const nuevaCancion = await response.json();
             console.log('Canción creada:', nuevaCancion);
-
+    
             for (let artistId of artistasSeleccionados) {
                 await associateArtistToSong(nuevaCancion.id, artistId, 'Artista');
             }
@@ -221,11 +221,11 @@ const AgregarCancion = () => {
                             Artista(s):
                             <select
                                 name="artistas"
-                                multiple
                                 value={artistasSeleccionados}
                                 onChange={handleArtistaChange}
                                 required
                             >
+                                <option value="">Seleccione un artista</option>
                                 {artistas.map(artista => (
                                     <option key={artista.id} value={artista.id}>{artista.name}</option>
                                 ))}
