@@ -1,6 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './EditarCancion.css';
+import { useAuth } from "../Contexts/AuthContext";
 
 const EditarCancion = () => {
     const { id } = useParams(); // Obtiene el ID de la canción desde los parámetros de la URL
@@ -14,59 +15,100 @@ const EditarCancion = () => {
     const [cargando, setCargando] = useState(false); // Estado para controlar el estado de carga
     const [error, setError] = useState(null);  // Estado para almacenar los mensajes de error
     const [albumes, setAlbumes] = useState([]);  // Estado para almacenar la lista de álbumes
-    const [artistas, setArtistas] = useState([]);  // Estado para almacenar la lista de artistas
+    const [artists, setArtists] = useState([]);  // Estado para almacenar la lista de artistas
+    const { state } = useAuth();
+    const token = state?.token;
 
-    useEffect(() => {
-        const fetchData = async () => {
-            const baseURL = 'https://sandbox.academiadevelopers.com/harmonyhub/';
-            const token = localStorage.getItem('authToken');  // Obtén el token de autenticación del localStorage
-
-            const fetchAllPages = async (url, includeToken = false) => {  // Función para fetch de todas las páginas de la API
-                let data = [];
-                let next = url;
-
-                while (next) {
-                    try {  // Fetch datos de la canción, álbumes y artistas
-                        const response = await fetch(next, {
-                            headers: includeToken ? { Authorization: `Token ${token}` } : {},
-                        });
-
-                        if (!response.ok) {
-                            const errorText = await response.text();
-                            throw new Error(`Error en la respuesta de la petición: ${errorText}`);
-                        }
-
-                        const json = await response.json();
-                        data = data.concat(json.results);  // Combina los resultados obtenidos
-                        next = json.next; // URL de la siguiente página
-                    } catch (error) {
-                        console.error(`Error fetching data from ${next}:`, error);
-                        setError(`Error al cargar datos de ${url}`);
-                        return [];
-                    }
-                }
-
-                return data;
-            };
+    useEffect(() => {  // Efecto para cargar artistas y álbumes al montar el componente
+        const fetchArtists = async () => {
+            let allArtists = [];
+            let page = 1;
+            let hasNextPage = true;
 
             try {
-                const [cancionResponse, albumesData, artistasData] = await Promise.all([
-                    fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`, {
+                while (hasNextPage) {
+                    const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/?page=${page}`, {
                         headers: {
                             Authorization: `Token ${token}`,
                         }
-                    }),
-                    fetchAllPages(`${baseURL}albums/`),
-                    fetchAllPages(`${baseURL}artists/`)
-                ]);
+                    });
+                    if (!response.ok) {
+                        throw new Error("Error al obtener la lista de artistas");
+                    }
+
+                    const data = await response.json();
+                    allArtists = allArtists.concat(data.results);
+
+                    if (data.next) {
+                        page++;
+                    } else {
+                        hasNextPage = false;
+                    }
+                }
+
+                setArtists(allArtists);
+            } catch (error) {
+                console.error("Error al cargar los artistas:", error);
+                setError("Error al cargar los artistas");
+            }
+        };
+
+        const fetchAlbumes = async () => {
+            let allAlbumes = [];
+            let page = 1;
+            let hasNextPage = true;
+
+            try {
+                while (hasNextPage) {
+                    const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/albums/?page=${page}`, {
+                        headers: {
+                            Authorization: `Token ${token}`,
+                        }
+                    });
+                    if (!response.ok) {
+                        throw new Error("Error al obtener la lista de albumes");
+                    }
+
+                    const data = await response.json();
+                    allAlbumes = allAlbumes.concat(data.results);
+
+                    if (data.next) {
+                        page++;
+                    } else {
+                        hasNextPage = false;
+                    }
+                }
+
+                setAlbumes(allAlbumes);
+            } catch (error) {
+                console.error("Error al cargar los albumes:", error);
+                setError("Error al cargar los albumes");
+            }
+        };
+
+        fetchArtists();
+        fetchAlbumes();
+    }, [token]);
+
+    useEffect(() => {
+        const fetchData = async () => {
+            try {
+                const cancionResponse = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/songs/${id}/`, {
+                    headers: {
+                        Authorization: `Token ${token}`,
+                    }
+                });
+                if(!cancionResponse.ok){
+                    throw new Error("Error al obtener los datos de la cancion");
+                }
 
                 const cancionData = await cancionResponse.json();
                 setTitulo(cancionData.title || '');   // Datos de la canción
                 setAnio(cancionData.year || '');  // Actualiza el estado con el título de la canción
                 setAlbum(cancionData.album || '');  // Actualiza el estado con el año de la canción
                 setArtista(cancionData.artists?.[0] || '');  // Actualiza el estado con el primer artista de la canción
-                setAlbumes(albumesData);  // Actualiza el estado con la lista de álbumes
-                setArtistas(artistasData);  //Actualiza el estado de la lista de artistas
+                //setAlbumes(albumesData);  // Actualiza el estado con la lista de álbumes
+                //setArtists(artistasData);  //Actualiza el estado de la lista de artistas
             } catch (error) {
                 console.error("Error fetching data: ", error);
                 setError("Error al cargar datos de la canción, álbumes o artistas.");
@@ -181,7 +223,7 @@ const EditarCancion = () => {
                             required
                         >
                             <option value="">Seleccione un artista</option>
-                            {artistas.map(artista => (
+                            {artists.map(artista => (
                                 <option key={artista.id} value={artista.id}>{artista.name || 'No especificado'}</option>
                             ))}
                         </select>
