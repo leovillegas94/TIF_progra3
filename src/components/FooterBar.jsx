@@ -1,6 +1,7 @@
 import React from 'react';
 import './FooterBar.css';
 
+//Definimos el componente Footer.
 export default function Footer() {
     return (
         <footer className="footer">

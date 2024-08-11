@@ -3,7 +3,10 @@ import { useNavigate } from 'react-router-dom';
 import './AgregarArtista.css';
 import { useAuth } from './Contexts/AuthContext';
 
+//DEfinimos el componente agregar artista.
 const AgregarArtista = () => {
+
+    //DEfinimos los estados iniciales, manejo de navegación, y contexto de autenticación.
     const [nombre, setNombre] = useState('');
     const [bio, setBio] = useState('');
     const [website, setWebsite] = useState('');
@@ -12,10 +15,13 @@ const AgregarArtista = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate(); 
     const { state: { token } } = useAuth();
+    
+    //Cambia el estado con la imagen seleccionada.
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     }
     
+    //Se invoca al enviar el formulario. Envía una solicitud POST a la API con los datos ingresados en el formulario y la imagen adjunta. Mediante preventDefault evitamos que la página se recargue al enviar el formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);

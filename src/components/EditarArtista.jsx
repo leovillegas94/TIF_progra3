@@ -2,7 +2,9 @@ import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import './AgregarArtista.css';
 
+//Definimos el componente Editar Artista que permite a edicion del mismo.
 const EditarArtista = () => {
+    //Definimos estados para los datos del artista, para el manejo de la carga. Tambien usamos useNavigate para la navegacion.
     const { id } = useParams();
     const [artista, setArtista] = useState(null);
     const [nombre, setNombre] = useState('');
@@ -13,7 +15,10 @@ const EditarArtista = () => {
     const [error, setError] = useState(null);
     const navigate = useNavigate();
 
+    //Mediante useEffect realizamos una solicitud asíncrona cuando el componente es montado
     useEffect(() => {
+
+        //Obtenemos los datos del artista mediante el id y una consulta a la API.
         const fetchArtista = async () => {
             try {
                 const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists/${id}`);
@@ -31,10 +36,12 @@ const EditarArtista = () => {
         fetchArtista();
     }, [id]);
 
+    //Maneja el cambio de estado de imagen
     const handleImageChange = (e) => {
         setImage(e.target.files[0]);
     }
 
+    //Se invoca al enviar el formulario.. Enviamos los datos editados del artista al servidor a través de una solicitud PATCH. Mediante preventDefault evitamos que la página se recargue al enviar el formulario
     const handleSubmit = async (e) => {
         e.preventDefault();
         setLoading(true);

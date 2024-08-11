@@ -4,15 +4,17 @@ import './Artista.css';
 import { FaTrash, FaEdit } from 'react-icons/fa';
 import FotoArtista from "../assets/Artista.jpg";
 
-//Acá se crea el componente Artista
+//Definimos el componente funcoinal Artista
 
 export default function Artista({ artist, onDelete }) {
+    //Usamos useNavigate para manejar la navegacion dentro de la aplicación.
     const navigate = useNavigate();
 
+    //Navega a la página de edición del artista, se invoca cuando se hace clic en el botón "Modificar"
     const handleEditClick = () => {
         navigate(`/artistas/editar/${artist.id}`);
     };
-
+    //Esta función realiza una solicitud DELETE a la API para eliminar al artista, se invoca cuando se confirma.
     const handleDeleteClick = async () => {
         if (window.confirm("¿Estás seguro de que deseas eliminar este artista?")) {
             const token = localStorage.getItem('authToken');

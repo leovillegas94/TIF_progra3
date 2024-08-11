@@ -4,23 +4,28 @@ import { Link, useNavigate } from 'react-router-dom';
 import { useAuth } from './Contexts/AuthContext';
 import './NavBar.css';
 
+//Definimo el componente NavBar mediante una arrow function
 export default function NavBar() {
+    //Definimos estados mediante useState, obtenemos contexto completo referido a la autenticación mediente useAuth, usamos useNavigate para poder navegar a otras rutas.
     const [showMenu, setShowMenu] = useState(false);
     const { state, actions } = useAuth(); // Obtén el contexto completo
     const { isAuthenticated, user } = state;
     const navigate = useNavigate();
     const menuRef = useRef(null);
 
+    //Esta funcion cambia el estado de showMenu, controla si se muestra o no.
     const handleMenuToggle = () => {
         setShowMenu(prev => !prev);
     };
 
+    //Esta funcion cierra sesión y redigrige a la ruta raíz.
     const handleLogout = () => {
         actions.logout();
         setShowMenu(false);
         navigate('/');
     };
 
+    //Mediante el useEffect se agrega un event listener para detectar clics fuera del menú desplegable, para ocultarlo automáticamente cuando se hace clic fuera de él.
     useEffect(() => {
         const handleClickOutside = (event) => {
             if (menuRef.current && !menuRef.current.contains(event.target)) {

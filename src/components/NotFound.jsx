@@ -3,9 +3,11 @@ import {useNavigate} from 'react-router-dom';
 import './NotFound.css';
 import notFoundImage from '../assets/404.jpg';
 
+//DEfinimos el componente NotFound mediante una arrow function. Usamos useNavigate para poder navegar hacia otras rutas.
 const NotFound = () => {
     const navigate = useNavigate();
 
+    //La siguiente funcion redirige a la ruta raíz cunado se la invoca.
     const handleGoHome = () => {
         navigate('/');
     };

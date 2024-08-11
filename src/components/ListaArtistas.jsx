@@ -5,9 +5,14 @@ import Artista from './Artista';
 import elementoNoEncontrado from '../assets/elemento_no_encontrado.jpg';
 import './ListaArtistas.css';
 
+//Definimos el componente funcional `ListaArtistas` que renderiza una lista de artistas y presenta funcionalidades para buscar, agregar, eliminar y paginar la lista de artistas.
+
+//Establecemos la cantidad de items por página.
 const ITEMS_PER_PAGE = 3;
 
+
 const ListaArtistas = () => {
+    //Inicializamos los estados usando useState
     const [artistas, setArtistas] = useState([]);
     const [currentPage, setCurrentPage] = useState(1);
     const [totalPages, setTotalPages] = useState(1);
@@ -15,7 +20,7 @@ const ListaArtistas = () => {
     const [searchResult, setSearchResult] = useState(null);
     const [errorMessage, setErrorMessage] = useState('');
 
-    // Función para obtener la lista de artistas
+    // Definimos la funcion asincrona que realiza la peticion a la API para traer los artistas.
     const fetchArtistas = useCallback(async (page = 1) => {
         try {
             const response = await fetch(`https://sandbox.academiadevelopers.com/harmonyhub/artists?page=${page}&page_size=${ITEMS_PER_PAGE}`);
@@ -29,7 +34,7 @@ const ListaArtistas = () => {
         }
     }, []);
 
-    // Función para buscar artistas
+    //Definimos la función asincrona para buscar artistas
     const fetchSearchResults = useCallback(async () => {
         if (!searchQuery.trim()) return;
 
@@ -54,7 +59,7 @@ const ListaArtistas = () => {
         }
     }, [searchQuery]);
 
-    // Cargar datos al montar el componente o al cambiar la página o la búsqueda
+    // Mediante useEffect se cargan los datos al montar el componente o al cambiar la página o la búsqueda
     useEffect(() => {
         if (searchQuery.trim()) {
             fetchSearchResults();

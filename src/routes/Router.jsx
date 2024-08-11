@@ -15,8 +15,7 @@ import AgregarAlbum from '../components/Albums/AgregarAlbum';
 import EditarAlbum from '../components/Albums/EditarAlbum';
 import EditarCancion from '../components/Reproductor/EditarCancion';
 
-
-
+//Definimos un conjunto de rutas y los componentes asociados a cada una utilizando el método `createBrowserRouter`. Estas rutas se utilizan para manejar la navegación dentro de la aplicación web y determina qué componentes deben ser renderizados en función de la URL actual.
 
 const router = createBrowserRouter([
     {

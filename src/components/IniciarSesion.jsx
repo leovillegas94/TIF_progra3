@@ -3,13 +3,16 @@ import {useNavigate} from 'react-router-dom';
 import './IniciarSesion.css';
 import accesDeniedImage from '../assets/login.jpg';
 
+//Definimos el componente iniciar sesion.
 const IniciarSesion = () => {
     const navigate = useNavigate();
 
+    //Navega al home.
     const handleGoHome = () => {
         navigate('/');
     }
 
+    //Navega a login.
     const handleLogin = () => {
         navigate('/login');
     }

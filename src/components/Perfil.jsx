@@ -4,7 +4,11 @@ import FotoPerfil from "../assets/Profile.jpg";
 import "../components/Perfil.css";
 import { FaEdit } from 'react-icons/fa';
 
+//Definimos el componente funconal Perfil.
+
 function Perfil() {
+
+    //Definimos los estados usando el hook useState para manejar el estado del componente.
     const [userData, setUserData] = useState(null);
     const [loading, setLoading] = useState(true);
     const [error, setError] = useState(null);
@@ -13,12 +17,14 @@ function Perfil() {
     const [editMode, setEditMode] = useState(false);
     const [loadingUpdate, setLoadingUpdate] = useState(false);
 
+    //Usamos useRef para guardar referencias a los campos del formulario.
     const firstNameRef = useRef(null);
     const lastNameRef = useRef(null);
     const emailRef = useRef(null);
     const dobRef = useRef(null);
     const bioRef = useRef(null);
 
+    //useEffect se utiliza para hacer una solicitud a la API para obtener los datos del perfil del usuario, cuando cambia el token o cuando se carga por primera vez el componente. Esto permite 
     useEffect(() => {
         if (!token) {
             setError("No se pudo obtener el token de autenticación.");
@@ -52,6 +58,7 @@ function Perfil() {
             });
     }, [token]);
 
+    //Medinate esta función se envían los datos de perfil a actualizar cuando se envía el formulario. Se usa preventDefault() para evitar que la página se reacargue al realizar el envío del formulario.
     function handleSubmit(event) {
         event.preventDefault();
         if (!userData || !userData.user__id) {
@@ -80,10 +87,12 @@ function Perfil() {
         );
     }
 
+    //Esta funcion cambia entre modo edición y modo visualización según sea necesario.
     function handleEditMode() {
         setEditMode(!editMode);
     }
 
+    //Esta funcion realiza una solicitud PATCH a la API para actualizar los datos del perfil.
     function updateProfile(url, options) {
         fetch(url, options)
             .then((response) => {
@@ -109,6 +118,7 @@ function Perfil() {
 
     return (
         <div className="perfil">
+            {/*verificamos si existen datos del perfil para renderizar*/}
             {userData ? (
                 <>
                     <form className="form" onSubmit={handleSubmit}>
